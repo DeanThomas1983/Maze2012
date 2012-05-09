@@ -29,6 +29,8 @@ namespace Maze2012
         private void button1_Click(object sender, EventArgs e)
         {
             dataModel.MazeStructure.generateMaze();
+            
+            g.Clear(Color.Black);
 
             g.DrawImage(dataModel.MazeStructure.get2DMap(new Size(32, 32)),new Point(0,0));
         }

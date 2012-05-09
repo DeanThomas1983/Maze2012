@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Maze2012
 {
@@ -17,12 +18,18 @@ namespace Maze2012
         //  Cell sizes
         int cellWidth;
         int cellHeight;
+
+        Cell origin;
         #endregion
         #region CONSTRUCTOR_METHODS
         public MazeStructure() : this(8, 8) { }
         
         public MazeStructure(int width, int height)
         {
+            //  Set class variables
+            this.width = width;
+            this.height = height;
+
             //  Clear any previous structures
             if (cells != null)
             {
@@ -40,9 +47,7 @@ namespace Maze2012
             //  Connect the cells
             connectCells();
 
-            //  Set class variables
-            this.width = width;
-            this.height = height;
+            
         }
         #endregion
 
@@ -116,19 +121,48 @@ namespace Maze2012
 
                 //  Set up connections
                 if (row > 0)
-                    cells[i].CellToNorth = cells[((col - 1) * width) + row];
+                    cells[i].CellToNorth = cells[coordinateToIndex(row - 1, col)];
+
+                if (row < height-1)
+                    cells[i].CellToSouth = cells[coordinateToIndex(row + 1, col)];
 
                 if (col > 0)
-                    cells[i].CellToWest = cells[i - 1];
+                    cells[i].CellToWest = cells[coordinateToIndex(row, col - 1)];
 
-                if (row < height - 1)
-                    cells[i].CellToSouth = cells[((col + 1) * width) + row];
-
-                if (col < width - 1)
-                    cells[i].CellToEast = cells[i + 1];
+                if (col < width-1)
+                    cells[i].CellToEast = cells[coordinateToIndex(row, col + 1)];
 
                 col++;
                 
+            }
+        }
+
+        private int coordinateToIndex(int row, int col)
+        {
+            if ((row >= 0) && (row < height))
+            {
+                if ((col >= 0) && (col < height))
+                {
+                    int result = 0;
+
+                    result = row * width;
+
+                    result += col;
+
+                    return result;
+                }
+                else
+                {
+                    Debug.WriteLine("Col {0} out of range (maxium {1})", col, width-1);
+
+                    return -1;
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Row {0} out of range (maximum {1})", row, height-1);
+
+                return -1;
             }
         }
 
@@ -149,7 +183,7 @@ namespace Maze2012
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
-                if (currentCell.NumberOfWalls > 1)
+                if (currentCell.NumberOfWalls > 0)
                 {
                     currentCell = currentCell.demolishRandomWall();
 

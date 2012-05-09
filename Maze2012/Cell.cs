@@ -73,10 +73,22 @@ namespace Maze2012
 
                 switch (r)
                 {
-                    case NORTH: success = demolishNorthWall(); result = CellToNorth; break;
-                    case SOUTH: success = demolishSouthWall(); result = CellToSouth; break;
-                    case EAST: success = demolishEastWall(); result = CellToEast; break;
-                    case WEST: success = demolishWestWall(); result = CellToWest; break;
+                    case NORTH: success = demolishNorthWall(); 
+                        if (success)
+                            result = CellToNorth;
+                    break;
+                    case SOUTH: success = demolishSouthWall(); 
+                        if (success)
+                            result = CellToSouth; 
+                    break;
+                    case EAST: success = demolishEastWall(); 
+                        if (success)
+                            result = CellToEast; 
+                    break;
+                    case WEST: success = demolishWestWall(); 
+                        if (success)
+                            result = CellToWest; 
+                    break;
                     default: Debug.WriteLine("Invalid wall selected for demolishion"); break;
                 }
             } while (!success);
