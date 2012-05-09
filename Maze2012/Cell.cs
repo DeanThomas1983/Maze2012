@@ -10,16 +10,20 @@ namespace Maze2012
     {
         #region CONSTANTS
         //  Index of cells in connection list
-        int NORTH = 0;
-        int EAST = 1;
-        int SOUTH = 2;
-        int WEST = 3;
+        const int NORTH = 0;
+        const int EAST = 1;
+        const int SOUTH = 2;
+        const int WEST = 3;
+        //  Number of maximum connections
+        const int MAXIMUM_CONNECTIONS = 4;
         #endregion
         #region PRIVATE_VARIABLES
         //  Lookup table for connected cells
         private Cell[] connectedCells;
         //  Walls
         private bool[] walls;
+        //  Random number generator
+        private Random random = new Random();
         #endregion
         #region PROPERTIES
         //  Connected cells
@@ -34,6 +38,52 @@ namespace Maze2012
         public Boolean WestWall { get { return walls[WEST]; } set { walls[WEST] = value; } }
         public int NumberOfWalls { get { return countWalls(); } }
         #endregion
+        public Cell demolishRandomWall()
+        {
+            /*
+            List<Cell> availableCells = new List<Cell>();
+            int r;
+
+            //  Could this be handled more efficiently with a for loop?
+
+            //  There is cell to the north and it is not blocked by a wall
+            if ((CellToNorth != null) && (!NorthWall))
+                availableCells.Add(CellToNorth);
+
+            //  There is cell to the south and it is not blocked by a wall
+            if ((CellToSouth != null) && (!SouthWall))
+                availableCells.Add(CellToSouth);
+
+            //  There is cell to the east and it is not blocked by a wall
+            if ((CellToEast != null) && (!EastWall))
+                availableCells.Add(CellToEast);
+
+            //  There is cell to the west and it is not blocked by a wall
+            if ((CellToWest != null) && (!WestWall))
+                availableCells.Add(CellToWest);
+            */
+
+            Boolean success = false;
+            Cell result = null;
+
+            do
+            {
+                //  Pick a random cell
+                int r = random.Next(MAXIMUM_CONNECTIONS);
+
+                switch (r)
+                {
+                    case NORTH: success = demolishNorthWall(); result = CellToNorth; break;
+                    case SOUTH: success = demolishSouthWall(); result = CellToSouth; break;
+                    case EAST: success = demolishEastWall(); result = CellToEast; break;
+                    case WEST: success = demolishWestWall(); result = CellToWest; break;
+                    default: Debug.WriteLine("Invalid wall selected for demolishion"); break;
+                }
+            } while (!success);
+
+            return result;
+        }
+
         private Boolean demolishNorthWall()
         {
             if (connectedCells[NORTH] != null)

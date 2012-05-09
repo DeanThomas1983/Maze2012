@@ -96,7 +96,18 @@ namespace Maze2012
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
-                
+                if (currentCell.NumberOfWalls > 0)
+                {
+                    currentCell = currentCell.demolishRandomWall();
+
+                    cellStack.Push(currentCell);
+
+                    visitedCells++;
+                }
+                else
+                {
+                    currentCell = cellStack.Pop();
+                }
             }
         }
     }
