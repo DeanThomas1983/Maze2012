@@ -87,20 +87,16 @@ namespace Maze2012
             int visitedCells = 0;
 
             //  Start the maze at a random position
-            Cell initialCell = cells[random.Next(cells.Count)];
+            Cell currentCell = cells[random.Next(cells.Count)];
 
             //  Push the origin onto the stack
-            cellStack.Push(initialCell);
+            cellStack.Push(currentCell);
             visitedCells++;
 
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
                 
-                if (cellStack.Peek().NumberOfWalls == 4)
-                {
-                    cellStack.Peek().demolishRandomWall();
-                }
             }
         }
     }
