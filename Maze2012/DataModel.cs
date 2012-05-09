@@ -9,6 +9,8 @@ namespace Maze2012
     {
         MazeStructure mazeStructure;
 
+        public MazeStructure MazeStructure { get { return mazeStructure; } }
+
         public DataModel()
         {
             mazeStructure = new MazeStructure();

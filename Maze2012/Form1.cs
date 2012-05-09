@@ -11,9 +11,26 @@ namespace Maze2012
 {
     public partial class Form1 : Form
     {
+        Graphics g;
+        DataModel dataModel;
+
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dataModel = new DataModel();
+
+            g = panel1.CreateGraphics();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            dataModel.MazeStructure.generateMaze();
+
+            g.DrawImage(dataModel.MazeStructure.get2DMap(new Size(32, 32)),new Point(0,0));
         }
     }
 }

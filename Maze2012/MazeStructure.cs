@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Maze2012
 {
@@ -16,8 +17,8 @@ namespace Maze2012
         //  Cell sizes
         int cellWidth;
         int cellHeight;
-#endregion
-
+        #endregion
+        #region CONSTRUCTOR_METHODS
         public MazeStructure() : this(8, 8) { }
         
         public MazeStructure(int width, int height)
@@ -43,6 +44,55 @@ namespace Maze2012
             this.width = width;
             this.height = height;
         }
+        #endregion
+
+        public Bitmap get2DMap(Size cellSize)
+        {
+            Bitmap result = new Bitmap(this.width * cellSize.Width, this.height * cellSize.Height);
+            Graphics g = Graphics.FromImage(result);
+
+            Pen pen = new Pen(Color.Blue);
+
+            int row = 0;
+            int col = 0;
+
+            for (int i = 0; i < this.cells.Count; i++)
+            {
+                if (col == width)
+                {
+                    row++;
+                    col = 0;
+                }
+
+                //  Draw the north wall (if present)
+                if (cells[i].NorthWall)
+                    g.DrawLine(pen,
+                        new Point(cellSize.Width * col, cellSize.Height * row),
+                        new Point(cellSize.Width * (col + 1), cellSize.Height * row));
+
+                //  Draw the south wall (if present)
+                if (cells[i].SouthWall)
+                    g.DrawLine(pen,
+                        new Point(cellSize.Width * col, (cellSize.Height * (row + 1)) - 1),
+                        new Point(cellSize.Width * (col + 1), (cellSize.Height * (row + 1)) - 1));
+
+                //  Draw the west wall (if present)
+                if (cells[i].WestWall)
+                    g.DrawLine(pen,
+                        new Point(cellSize.Width * col, cellSize.Height * row),
+                        new Point(cellSize.Width * col, cellSize.Height * (row + 1)));
+
+                //  Draw the east wall (if present)
+                if (cells[i].EastWall)
+                    g.DrawLine(pen,
+                        new Point((cellSize.Width * (col + 1) - 1), cellSize.Height * row),
+                        new Point((cellSize.Width * (col + 1) - 1), cellSize.Height * (row + 1)));
+
+                col++;
+            }
+
+            return result;
+        }
 
         public void generateMaze()
         {
@@ -52,11 +102,11 @@ namespace Maze2012
 
         private void connectCells()
         {
+            int row = 0;
+            int col = 0;
+
             for (int i = 0; i < cells.Count; i++)
             {
-                int row = 0;
-                int col = 0;
-
                 //  Take the 1D number and conver to a 2D position
                 if (col == width)
                 {
@@ -76,6 +126,9 @@ namespace Maze2012
 
                 if (col < width - 1)
                     cells[i].CellToEast = cells[i + 1];
+
+                col++;
+                
             }
         }
 
@@ -96,7 +149,7 @@ namespace Maze2012
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
-                if (currentCell.NumberOfWalls > 0)
+                if (currentCell.NumberOfWalls > 1)
                 {
                     currentCell = currentCell.demolishRandomWall();
 
