@@ -13,6 +13,7 @@ namespace Maze2012
     {
         Graphics g;
         DataModel dataModel;
+        int selected = 0;
 
         public Form1()
         {
@@ -32,7 +33,18 @@ namespace Maze2012
             
             g.Clear(Color.Black);
 
-            g.DrawImage(dataModel.MazeStructure.get2DMap(new Size(32, 32)),new Point(0,0));
+            g.DrawImage(dataModel.MazeStructure.TwoDimensionalMap,new Point(0,0));
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            selected++;
+
+            dataModel.MazeStructure.SelectedCell = selected;
+
+            g.Clear(Color.Black);
+
+            g.DrawImage(dataModel.MazeStructure.TwoDimensionalMap, new Point(0, 0));
         }
     }
 }

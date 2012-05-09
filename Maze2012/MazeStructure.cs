@@ -12,23 +12,36 @@ namespace Maze2012
 #region PRIVATE_VARIABLES
         List<Cell> cells = new List<Cell>();
 
+        //  pen.Color = Color.Blue;
+        Random r = new Random();
+
         //  Dimensions in cells
         int width;
         int height;
         //  Cell sizes
-        int cellWidth;
-        int cellHeight;
+        Size cellSize;
 
         Cell origin;
+
+        int selectedCell = -1;
+
+        Bitmap twoDimensionalMap;
         #endregion
+
+        public Bitmap TwoDimensionalMap { get { createTwoDimensionalMap(); return twoDimensionalMap; } }
+        public int SelectedCell { get { return selectedCell; } set { selectedCell = value; } }
+
+
         #region CONSTRUCTOR_METHODS
-        public MazeStructure() : this(8, 8) { }
+        public MazeStructure() : this(8, 8, new Size(32,32)) { }
         
-        public MazeStructure(int width, int height)
+        public MazeStructure(int width, int height, Size cellSize)
         {
             //  Set class variables
             this.width = width;
             this.height = height;
+
+            this.cellSize = cellSize;
 
             //  Clear any previous structures
             if (cells != null)
@@ -50,11 +63,16 @@ namespace Maze2012
             
         }
         #endregion
-
-        public Bitmap get2DMap(Size cellSize)
+        
+        
+        private void createTwoDimensionalMap()
         {
-            Bitmap result = new Bitmap(this.width * cellSize.Width, this.height * cellSize.Height);
-            Graphics g = Graphics.FromImage(result);
+            if (twoDimensionalMap != null)
+                twoDimensionalMap.Dispose();
+
+            twoDimensionalMap = new Bitmap(this.width * cellSize.Width, this.height * cellSize.Height);
+            
+            Graphics g = Graphics.FromImage(twoDimensionalMap);
 
             Pen pen = new Pen(Color.Blue);
 
@@ -67,6 +85,32 @@ namespace Maze2012
                 {
                     row++;
                     col = 0;
+                }
+
+                //  Highlight origin in light blue
+                if (cells[i] == origin)
+                {
+                    pen.Color = Color.LightBlue;
+                }
+                else
+                {
+                    if (i == selectedCell)
+                    {
+                        //  Highlight selected cell in yellow
+                        pen.Color = Color.Yellow;
+                    }
+                    else
+                    {
+                        if ((selectedCell == coordinateToIndex(row - 1, col)) || (selectedCell == coordinateToIndex(row + 1, col))
+                            || (selectedCell == coordinateToIndex(row, col - 1)) || (selectedCell == coordinateToIndex(row, col + 1)))
+                        {
+                            pen.Color = Color.LightGreen;
+                        }
+                        else
+                        {
+                            pen.Color = Color.Blue;
+                        }
+                    }
                 }
 
                 //  Draw the north wall (if present)
@@ -96,13 +140,15 @@ namespace Maze2012
                 col++;
             }
 
-            return result;
+            pen.Dispose();
+
+            g.Dispose();
         }
 
         public void generateMaze()
         {
             //  Later will add additional algorithms
-            this.generateDepthFirst();
+            //this.generateDepthFirst();
         }
 
         private void connectCells()
@@ -175,6 +221,7 @@ namespace Maze2012
 
             //  Start the maze at a random position
             Cell currentCell = cells[random.Next(cells.Count)];
+            origin = currentCell;
 
             //  Push the origin onto the stack
             cellStack.Push(currentCell);
