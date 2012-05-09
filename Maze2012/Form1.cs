@@ -25,6 +25,8 @@ namespace Maze2012
             dataModel = new DataModel();
 
             g = panel1.CreateGraphics();
+
+
         }
 
         private void button1_Click(object sender, EventArgs e)

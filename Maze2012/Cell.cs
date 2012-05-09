@@ -98,7 +98,7 @@ namespace Maze2012
 
         private Boolean demolishNorthWall()
         {
-            if (connectedCells[NORTH] != null)
+            if ((connectedCells[NORTH] != null) && (this.NorthWall))
             {
                 this.walls[NORTH] = false;
                 this.CellToNorth.walls[SOUTH] = false;
@@ -113,7 +113,7 @@ namespace Maze2012
 
         private Boolean demolishSouthWall()
         {
-            if (connectedCells[SOUTH] != null)
+            if ((connectedCells[SOUTH] != null) && (this.SouthWall))
             {
                 this.walls[SOUTH] = false;
                 this.CellToSouth.walls[NORTH] = false;
@@ -128,7 +128,7 @@ namespace Maze2012
 
         private Boolean demolishEastWall()
         {
-            if (connectedCells[EAST] != null)
+            if ((connectedCells[EAST] != null) && (this.EastWall))
             {
                 this.walls[EAST] = false;
                 this.CellToEast.walls[WEST] = false;
@@ -143,7 +143,7 @@ namespace Maze2012
 
         private Boolean demolishWestWall()
         {
-            if (connectedCells[WEST] != null)
+            if ((connectedCells[WEST] != null) && (this.WestWall))
             {
                 this.walls[WEST] = false;
                 this.CellToWest.walls[EAST] = false;

@@ -37,6 +37,8 @@ namespace Maze2012
         
         public MazeStructure(int width, int height, Size cellSize)
         {
+            Debug.Indent();
+
             //  Set class variables
             this.width = width;
             this.height = height;
@@ -101,12 +103,14 @@ namespace Maze2012
                     }
                     else
                     {
+                        /*
                         if ((selectedCell == coordinateToIndex(row - 1, col)) || (selectedCell == coordinateToIndex(row + 1, col))
                             || (selectedCell == coordinateToIndex(row, col - 1)) || (selectedCell == coordinateToIndex(row, col + 1)))
                         {
                             pen.Color = Color.LightGreen;
                         }
                         else
+                         */
                         {
                             pen.Color = Color.Blue;
                         }
@@ -147,8 +151,9 @@ namespace Maze2012
 
         public void generateMaze()
         {
+            Debug.WriteLine("Generating new maze");
             //  Later will add additional algorithms
-            //this.generateDepthFirst();
+            this.generateDepthFirst();
         }
 
         private void connectCells()
@@ -181,6 +186,16 @@ namespace Maze2012
                 col++;
                 
             }
+        }
+
+        private Point indexToCoordinate(int index)
+        {
+            Point result = new Point();
+
+            result.X = index % width;
+            result.Y = index / width;
+            
+            return result;
         }
 
         private int coordinateToIndex(int row, int col)
@@ -227,6 +242,11 @@ namespace Maze2012
             cellStack.Push(currentCell);
             visitedCells++;
 
+            Debug.WriteLine("Current cell [{0},{1}]",
+                indexToCoordinate(cells.IndexOf(currentCell)).X, 
+                indexToCoordinate(cells.IndexOf(currentCell)).Y);
+            Debug.WriteLine("Visited cells is now {0}", visitedCells);
+
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
@@ -236,11 +256,20 @@ namespace Maze2012
 
                     cellStack.Push(currentCell);
 
+                    Debug.WriteLine("Current cell [{0},{1}]",
+                        indexToCoordinate(cells.IndexOf(currentCell)).X,
+                        indexToCoordinate(cells.IndexOf(currentCell)).Y);
+                    Debug.WriteLine("Visited cells is now {0}", visitedCells);
+
                     visitedCells++;
                 }
                 else
                 {
                     currentCell = cellStack.Pop();
+
+                    Debug.WriteLine("Current cell [{0},{1}]",
+                        indexToCoordinate(cells.IndexOf(currentCell)).X,
+                        indexToCoordinate(cells.IndexOf(currentCell)).Y);
                 }
             }
         }
