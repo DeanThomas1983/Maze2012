@@ -9,7 +9,7 @@ namespace Maze2012
 {
     class MazeStructure
     {
-#region PRIVATE_VARIABLES
+        #region PRIVATE_VARIABLES
         List<Cell> cells = new List<Cell>();
 
         //  pen.Color = Color.Blue;
@@ -22,6 +22,7 @@ namespace Maze2012
         Size cellSize;
 
         Cell origin;
+        Cell terminus;
 
         int selectedCell = -1;
 
@@ -33,7 +34,7 @@ namespace Maze2012
 
 
         #region CONSTRUCTOR_METHODS
-        public MazeStructure() : this(32, 32, new Size(8,8)) { }
+        public MazeStructure() : this(8, 8, new Size(32,32)) { }
         
         public MazeStructure(int width, int height, Size cellSize)
         {
@@ -45,6 +46,12 @@ namespace Maze2012
 
             this.cellSize = cellSize;
 
+            resetMaze();
+        }
+        #endregion
+        
+        private void resetMaze()
+        {
             //  Clear any previous structures
             if (cells != null)
             {
@@ -61,11 +68,7 @@ namespace Maze2012
 
             //  Connect the cells
             connectCells();
-
-            
         }
-        #endregion
-        
         
         private void createTwoDimensionalMap()
         {
@@ -96,23 +99,31 @@ namespace Maze2012
                 }
                 else
                 {
-                    if (i == selectedCell)
+                    //  Mark the terminus in orange
+                    if (cells[i] == terminus)
                     {
-                        //  Highlight selected cell in yellow
-                        pen.Color = Color.Yellow;
+                        pen.Color = Color.Orange;
                     }
                     else
                     {
-                        /*
-                        if ((selectedCell == coordinateToIndex(row - 1, col)) || (selectedCell == coordinateToIndex(row + 1, col))
-                            || (selectedCell == coordinateToIndex(row, col - 1)) || (selectedCell == coordinateToIndex(row, col + 1)))
+                        if (i == selectedCell)
                         {
-                            pen.Color = Color.LightGreen;
+                            //  Highlight selected cell in yellow
+                            pen.Color = Color.Yellow;
                         }
                         else
-                         */
                         {
-                            pen.Color = Color.Blue;
+                            /*
+                            if ((selectedCell == coordinateToIndex(row - 1, col)) || (selectedCell == coordinateToIndex(row + 1, col))
+                                || (selectedCell == coordinateToIndex(row, col - 1)) || (selectedCell == coordinateToIndex(row, col + 1)))
+                            {
+                                pen.Color = Color.LightGreen;
+                            }
+                            else
+                             */
+                            {
+                                pen.Color = Color.Blue;
+                            }
                         }
                     }
                 }
@@ -152,6 +163,9 @@ namespace Maze2012
         public void generateMaze()
         {
             Debug.WriteLine("Generating new maze");
+
+            this.resetMaze();
+
             //  Later will add additional algorithms
             this.generateDepthFirst();
         }
@@ -272,6 +286,9 @@ namespace Maze2012
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
                 }
             }
+
+            //  Mark the exit of the maze
+            this.terminus = currentCell;
         }
     }
 }
