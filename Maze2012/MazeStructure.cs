@@ -33,7 +33,7 @@ namespace Maze2012
 
 
         #region CONSTRUCTOR_METHODS
-        public MazeStructure() : this(8, 8, new Size(32,32)) { }
+        public MazeStructure() : this(32, 32, new Size(8,8)) { }
         
         public MazeStructure(int width, int height, Size cellSize)
         {
@@ -250,7 +250,7 @@ namespace Maze2012
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
-                if (currentCell.NumberOfWalls > 0)
+                if (currentCell.PotentialCellConnections.Count > 0)
                 {
                     currentCell = currentCell.demolishRandomWall();
 

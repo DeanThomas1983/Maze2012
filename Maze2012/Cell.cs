@@ -22,78 +22,57 @@ namespace Maze2012
         private Cell[] connectedCells;
         //  Walls
         private bool[] walls;
+
+        private List<int> potentialCellConnections = new List<int>();
         //  Random number generator
-        private Random random = new Random();
+        static private Random random = new Random();
         #endregion
         #region PROPERTIES
         //  Connected cells
-        public Cell CellToNorth { get { return connectedCells[NORTH]; } set { connectedCells[NORTH] = value; } }
-        public Cell CellToSouth { get { return connectedCells[SOUTH]; } set { connectedCells[SOUTH] = value; } }
-        public Cell CellToEast { get { return connectedCells[EAST]; } set { connectedCells[EAST] = value; } }
-        public Cell CellToWest { get { return connectedCells[WEST]; } set { connectedCells[WEST] = value; } }
+        public Cell CellToNorth { get { return connectedCells[NORTH]; } set { connectedCells[NORTH] = value; this.buildListOfPotentialConnections(); } }
+        public Cell CellToSouth { get { return connectedCells[SOUTH]; } set { connectedCells[SOUTH] = value; this.buildListOfPotentialConnections(); } }
+        public Cell CellToEast { get { return connectedCells[EAST]; } set { connectedCells[EAST] = value; this.buildListOfPotentialConnections(); } }
+        public Cell CellToWest { get { return connectedCells[WEST]; } set { connectedCells[WEST] = value; this.buildListOfPotentialConnections(); } }
+        //  List of valid connections
+        public List<int> PotentialCellConnections { get { return potentialCellConnections; } }
         //  Walls
         public Boolean NorthWall { get { return walls[NORTH]; } set { walls[NORTH] = value; } }
         public Boolean SouthWall { get { return walls[SOUTH]; } set { walls[SOUTH] = value; } }
         public Boolean EastWall { get { return walls[EAST]; } set { walls[EAST] = value; } }
         public Boolean WestWall { get { return walls[WEST]; } set { walls[WEST] = value; } }
         public int NumberOfWalls { get { return countWalls(); } }
+        
         #endregion
+        private void buildListOfPotentialConnections()
+        {
+            potentialCellConnections.Clear();
+
+            //  Build a list of connections to cells with all their walls intact
+            for (int i = 0; i < connectedCells.Length; i++)
+            {
+                if (connectedCells[i] != null)
+                {
+                    if (connectedCells[i].countWalls() == 4)
+                    {
+                        //  List of directions
+                        potentialCellConnections.Add(i);
+                    }
+                }
+            }
+        }
+
         public Cell demolishRandomWall()
         {
-            /*
-            List<Cell> availableCells = new List<Cell>();
-            int r;
+            int r = random.Next(potentialCellConnections.Count);
 
-            //  Could this be handled more efficiently with a for loop?
-
-            //  There is cell to the north and it is not blocked by a wall
-            if ((CellToNorth != null) && (!NorthWall))
-                availableCells.Add(CellToNorth);
-
-            //  There is cell to the south and it is not blocked by a wall
-            if ((CellToSouth != null) && (!SouthWall))
-                availableCells.Add(CellToSouth);
-
-            //  There is cell to the east and it is not blocked by a wall
-            if ((CellToEast != null) && (!EastWall))
-                availableCells.Add(CellToEast);
-
-            //  There is cell to the west and it is not blocked by a wall
-            if ((CellToWest != null) && (!WestWall))
-                availableCells.Add(CellToWest);
-            */
-
-            Boolean success = false;
-            Cell result = null;
-
-            do
+            switch (potentialCellConnections[r])
             {
-                //  Pick a random cell
-                int r = random.Next(MAXIMUM_CONNECTIONS);
-
-                switch (r)
-                {
-                    case NORTH: success = demolishNorthWall(); 
-                        if (success)
-                            result = CellToNorth;
-                    break;
-                    case SOUTH: success = demolishSouthWall(); 
-                        if (success)
-                            result = CellToSouth; 
-                    break;
-                    case EAST: success = demolishEastWall(); 
-                        if (success)
-                            result = CellToEast; 
-                    break;
-                    case WEST: success = demolishWestWall(); 
-                        if (success)
-                            result = CellToWest; 
-                    break;
-                    default: Debug.WriteLine("Invalid wall selected for demolishion"); break;
-                }
-            } while (!success);
-
-            return result;
+                case NORTH: demolishNorthWall(); return CellToNorth;
+                case SOUTH: demolishSouthWall(); return CellToSouth;
+                case EAST: demolishEastWall(); return CellToEast;
+                case WEST: demolishWestWall(); return CellToWest;
+                default: Debug.WriteLine("Invalid cell selected for demolishion"); return null;
+            }
         }
 
         private Boolean demolishNorthWall()
@@ -101,7 +80,9 @@ namespace Maze2012
             if ((connectedCells[NORTH] != null) && (this.NorthWall))
             {
                 this.walls[NORTH] = false;
+                this.buildListOfPotentialConnections();
                 this.CellToNorth.walls[SOUTH] = false;
+                this.CellToNorth.buildListOfPotentialConnections();
                 return true;
             }
             else
@@ -116,7 +97,9 @@ namespace Maze2012
             if ((connectedCells[SOUTH] != null) && (this.SouthWall))
             {
                 this.walls[SOUTH] = false;
+                this.buildListOfPotentialConnections();
                 this.CellToSouth.walls[NORTH] = false;
+                this.CellToSouth.buildListOfPotentialConnections();
                 return true;
             }
             else
@@ -131,7 +114,9 @@ namespace Maze2012
             if ((connectedCells[EAST] != null) && (this.EastWall))
             {
                 this.walls[EAST] = false;
+                this.buildListOfPotentialConnections();
                 this.CellToEast.walls[WEST] = false;
+                this.CellToEast.buildListOfPotentialConnections();
                 return true;
             }
             else
@@ -146,7 +131,9 @@ namespace Maze2012
             if ((connectedCells[WEST] != null) && (this.WestWall))
             {
                 this.walls[WEST] = false;
+                this.buildListOfPotentialConnections();
                 this.CellToWest.walls[EAST] = false;
+                this.CellToWest.buildListOfPotentialConnections();
                 return true;
             }
             else
