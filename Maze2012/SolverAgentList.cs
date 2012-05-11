@@ -7,5 +7,9 @@ namespace Maze2012
 {
     class SolverAgentList : List<SolverAgent>
     {
+        public SolverAgentList()
+        {
+
+        }
     }
 }

@@ -7,5 +7,9 @@ namespace Maze2012
 {
     abstract class SolverAgent
     {
+        public SolverAgent()
+        {
+
+        }
     }
 }
