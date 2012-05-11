@@ -35,7 +35,6 @@ namespace Maze2012
 
         #endregion
         #region PUBLIC_PROPERTIES
-
         //  Connected cells
         public Cell CellToNorth { get { return connectedCells[NORTH]; } set { connectedCells[NORTH] = value; } }
         public Cell CellToSouth { get { return connectedCells[SOUTH]; } set { connectedCells[SOUTH] = value; } }
@@ -51,6 +50,7 @@ namespace Maze2012
         public int NumberOfWalls { get { return countWalls(); } }
         //  Coordinates
         public Point Coordinates { get { return coordinates; } }
+        
 
         #endregion
 

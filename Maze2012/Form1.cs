@@ -37,11 +37,13 @@ namespace Maze2012
 
         void MazeStructure_generationCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            dataModel.SolverAgentList.setAgentStartingCells(dataModel.MazeStructure.Origin);
+
             g.Clear(Color.Black);
 
-            g.DrawImage(dataModel.MazeStructure.TwoDimensionalMap, new Point(0, 0));
+            g.DrawImage(dataModel.TwoDimensionalMap, new Point(0, 0));
 
-            dataModel.SolverAgentList.setAgentStartingCells(dataModel.MazeStructure.Origin);
+            
         }
 
         void MazeStructure_generationProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -61,6 +63,9 @@ namespace Maze2012
         private void button2_Click(object sender, EventArgs e)
         {
             dataModel.SolverAgentList.move();
+
+            g.DrawImage(dataModel.TwoDimensionalMap, new Point(0, 0));
+
         }
     }
 }

@@ -101,6 +101,12 @@ namespace Maze2012
          */
         public Point SelectedCellCoordinates { get { return indexToCoordinate(selectedCellIndex); } }
 
+        //  Bounding rect
+        public Rectangle getBoundingRectangle(Cell cell)
+        {
+            return new Rectangle(new Point(cell.Coordinates.X * cellSize.Width,cell.Coordinates.Y * cellSize.Height),cellSize);
+        }
+
         #endregion
         #region DELEGATE_METHODS
 

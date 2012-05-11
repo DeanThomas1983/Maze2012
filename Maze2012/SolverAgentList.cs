@@ -37,7 +37,8 @@ namespace Maze2012
         {
             foreach (SolverAgent solverAgent in this)
             {
-                Debug.WriteLine("Solver at position : " + solverAgent.CurrentCell.Coordinates.ToString());
+                Debug.WriteLine("Solver at position : " + solverAgent.CurrentCell.Coordinates.ToString()
+                    + " is heading " + solverAgent.DirectionOfTravel.ToString());
             }
         }
     }

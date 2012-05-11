@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Cell.cs" />
     <Compile Include="DataModel.cs" />
+    <Compile Include="DirectionOfTravel.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
