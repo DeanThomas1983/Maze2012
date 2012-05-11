@@ -4,11 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Maze2012
 {
     class MazeStructure
     {
+        #region REFERENCES
+        //  Background worker:  
+        //  http://msdn.microsoft.com/en-us/library/system.componentmodel.backgroundworker.aspx     [11-05-2012]
+        #endregion
         #region PRIVATE_VARIABLES
         //  List of all the cells associated with the current maze
         List<Cell> cells = new List<Cell>();
@@ -31,6 +36,9 @@ namespace Maze2012
 
         //  Holder for 2D representation of the maze
         Bitmap twoDimensionalMap;
+
+        //  Background worker for generation algorithms
+        BackgroundWorker generationBackgroundWorker = new BackgroundWorker();
         #endregion
         /**
          *  Return the maze in 2D
@@ -46,26 +54,96 @@ namespace Maze2012
          *  Return the cell currently marked as selected
          * 
          *  @return the index of the selected cell
-         */  
+         */
         public int SelectedCell { get { return selectedCell; } set { selectedCell = value; } }
 
 
         #region CONSTRUCTOR_METHODS
-        public MazeStructure() : this(new Size(8, 8), new Size(32,32)) { }
-        
+        public MazeStructure() : this(new Size(16, 16), new Size(16, 16)) { }
+
         public MazeStructure(Size mazeDimensions, Size cellSize)
         {
+            //  Indent console output
             Debug.Indent();
 
             //  Set class variables
             this.mazeDimensions = mazeDimensions;
-            
             this.cellSize = cellSize;
 
+            //  Set up the background worker for maze generation
+            this.generationBackgroundWorker.WorkerReportsProgress = true;
+            this.generationBackgroundWorker.DoWork += new DoWorkEventHandler(generationBackgroundWorker_DoWork);
+            this.generationBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(generationBackgroundWorker_ProgressChanged);
+            this.generationBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(generationBackgroundWorker_RunWorkerCompleted);
+
+
+            //  Clear the maze and setup connections
             resetMaze();
         }
         #endregion
-        
+        #region DELEGATE_METHODS
+        //  Handle progression event in maze generation
+        public delegate void generationProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
+        //  Handle completion event in maze generation
+        public delegate void generationCompletedEventHandler(object sender, RunWorkerCompletedEventArgs e);
+        #endregion
+
+        #region EVENTS
+        //  Raise an event to be handled by the parent object for completion of maze generation
+        public event generationCompletedEventHandler generationCompleted;
+        //  Raise an event to be handled by the parent object for progression of maze generation
+        public event generationProgressChangedEventHandler generationProgressChanged;
+        #endregion
+
+        #region BACKGROUND_WORKER_METHODS
+        /**
+         *  Maze generation progressed
+         *  
+         *  The maze generator has progressed; pass this on to parent objects
+         */
+        void generationBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            generationProgressChangedEventHandler handler = generationProgressChanged;
+
+            if (handler != null)
+            {
+                //  Invoke the delegate
+                handler(this, e);
+            }
+        }
+
+        /**
+         *  Maze generation completed
+         *  
+         *  The generation background thread completed; maze has been completed
+         */
+        void generationBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            generationCompletedEventHandler handler = generationCompleted;
+
+            if (handler != null)
+            {
+                //  Invoke the delegate
+                handler(this, e);
+            }
+        }
+
+        /**
+         *  Generate a new maze
+         *  
+         *  Generation background work has been started; begin creating a new maze
+         */
+        void generationBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Debug.WriteLine("Generating new maze");
+
+            this.resetMaze();
+
+            //  Later will add additional algorithms
+            this.generateDepthFirst();
+        }
+        #endregion
+
         private void resetMaze()
         {
             //  Clear any previous structures
@@ -85,7 +163,7 @@ namespace Maze2012
             //  Connect the cells
             connectCells();
         }
-        
+
         private void createTwoDimensionalMap()
         {
             if (twoDimensionalMap != null)
@@ -93,7 +171,7 @@ namespace Maze2012
 
             twoDimensionalMap = new Bitmap(this.mazeDimensions.Width * cellSize.Width,
                 this.mazeDimensions.Height * cellSize.Height);
-            
+
             Graphics g = Graphics.FromImage(twoDimensionalMap);
 
             Pen pen = new Pen(Color.Blue);
@@ -179,12 +257,7 @@ namespace Maze2012
 
         public void generateMaze()
         {
-            Debug.WriteLine("Generating new maze");
-
-            this.resetMaze();
-
-            //  Later will add additional algorithms
-            this.generateDepthFirst();
+            generationBackgroundWorker.RunWorkerAsync();
         }
 
         private void connectCells()
@@ -215,7 +288,7 @@ namespace Maze2012
                     cells[i].CellToEast = cells[coordinateToIndex(row, col + 1)];
 
                 col++;
-                
+
             }
         }
 
@@ -225,7 +298,7 @@ namespace Maze2012
 
             result.X = index % this.mazeDimensions.Width;
             result.Y = index / this.mazeDimensions.Width;
-            
+
             return result;
         }
 
@@ -274,7 +347,7 @@ namespace Maze2012
             visitedCells++;
 
             Debug.WriteLine("Current cell [{0},{1}]",
-                indexToCoordinate(cells.IndexOf(currentCell)).X, 
+                indexToCoordinate(cells.IndexOf(currentCell)).X,
                 indexToCoordinate(cells.IndexOf(currentCell)).Y);
             Debug.WriteLine("Visited cells is now {0}", visitedCells);
 
@@ -302,6 +375,10 @@ namespace Maze2012
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
                 }
+
+                //  Report the generation progress to the delegate method
+                generationBackgroundWorker.ReportProgress(
+                    (int)(100 * ((decimal)visitedCells / (decimal)cells.Count)));
             }
 
             //  Mark the exit of the maze
