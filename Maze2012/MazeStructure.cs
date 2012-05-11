@@ -10,40 +10,56 @@ namespace Maze2012
     class MazeStructure
     {
         #region PRIVATE_VARIABLES
+        //  List of all the cells associated with the current maze
         List<Cell> cells = new List<Cell>();
 
-        //  pen.Color = Color.Blue;
+        //  Random number generator
         Random r = new Random();
 
-        //  Dimensions in cells
-        int width;
-        int height;
+        //  Dimensions of the maze (number of cells)
+        Size mazeDimensions;
+
         //  Cell sizes
         Size cellSize;
 
+        //  Start and end of the maze
         Cell origin;
         Cell terminus;
 
+        //  Cell index to highlight
         int selectedCell = -1;
 
+        //  Holder for 2D representation of the maze
         Bitmap twoDimensionalMap;
         #endregion
-
+        /**
+         *  Return the maze in 2D
+         * 
+         *  Return a map of the maze in 2 dimensions
+         *  
+         *  @return the map as a bitmap
+         */
         public Bitmap TwoDimensionalMap { get { createTwoDimensionalMap(); return twoDimensionalMap; } }
+        /**
+         *  Return the index of the selected cell
+         * 
+         *  Return the cell currently marked as selected
+         * 
+         *  @return the index of the selected cell
+         */  
         public int SelectedCell { get { return selectedCell; } set { selectedCell = value; } }
 
 
         #region CONSTRUCTOR_METHODS
-        public MazeStructure() : this(8, 8, new Size(32,32)) { }
+        public MazeStructure() : this(new Size(8, 8), new Size(32,32)) { }
         
-        public MazeStructure(int width, int height, Size cellSize)
+        public MazeStructure(Size mazeDimensions, Size cellSize)
         {
             Debug.Indent();
 
             //  Set class variables
-            this.width = width;
-            this.height = height;
-
+            this.mazeDimensions = mazeDimensions;
+            
             this.cellSize = cellSize;
 
             resetMaze();
@@ -59,7 +75,7 @@ namespace Maze2012
             }
 
             //  Create the array of cells (as a 1D list)
-            for (int i = 0; i < width * height; i++)
+            for (int i = 0; i < mazeDimensions.Width * mazeDimensions.Height; i++)
             {
                 Cell newCell = new Cell();
 
@@ -75,7 +91,8 @@ namespace Maze2012
             if (twoDimensionalMap != null)
                 twoDimensionalMap.Dispose();
 
-            twoDimensionalMap = new Bitmap(this.width * cellSize.Width, this.height * cellSize.Height);
+            twoDimensionalMap = new Bitmap(this.mazeDimensions.Width * cellSize.Width,
+                this.mazeDimensions.Height * cellSize.Height);
             
             Graphics g = Graphics.FromImage(twoDimensionalMap);
 
@@ -86,7 +103,7 @@ namespace Maze2012
 
             for (int i = 0; i < this.cells.Count; i++)
             {
-                if (col == width)
+                if (col == this.mazeDimensions.Width)
                 {
                     row++;
                     col = 0;
@@ -177,8 +194,8 @@ namespace Maze2012
 
             for (int i = 0; i < cells.Count; i++)
             {
-                //  Take the 1D number and conver to a 2D position
-                if (col == width)
+                //  Take the 1D number and convert to a 2D position
+                if (col == this.mazeDimensions.Width)
                 {
                     row++;
                     col = 0;
@@ -188,13 +205,13 @@ namespace Maze2012
                 if (row > 0)
                     cells[i].CellToNorth = cells[coordinateToIndex(row - 1, col)];
 
-                if (row < height-1)
+                if (row < this.mazeDimensions.Height - 1)
                     cells[i].CellToSouth = cells[coordinateToIndex(row + 1, col)];
 
                 if (col > 0)
                     cells[i].CellToWest = cells[coordinateToIndex(row, col - 1)];
 
-                if (col < width-1)
+                if (col < mazeDimensions.Width - 1)
                     cells[i].CellToEast = cells[coordinateToIndex(row, col + 1)];
 
                 col++;
@@ -206,21 +223,21 @@ namespace Maze2012
         {
             Point result = new Point();
 
-            result.X = index % width;
-            result.Y = index / width;
+            result.X = index % this.mazeDimensions.Width;
+            result.Y = index / this.mazeDimensions.Width;
             
             return result;
         }
 
         private int coordinateToIndex(int row, int col)
         {
-            if ((row >= 0) && (row < height))
+            if ((row >= 0) && (row < mazeDimensions.Height))
             {
-                if ((col >= 0) && (col < height))
+                if ((col >= 0) && (col < mazeDimensions.Height))
                 {
                     int result = 0;
 
-                    result = row * width;
+                    result = row * mazeDimensions.Width;
 
                     result += col;
 
@@ -228,14 +245,14 @@ namespace Maze2012
                 }
                 else
                 {
-                    Debug.WriteLine("Col {0} out of range (maxium {1})", col, width-1);
+                    Debug.WriteLine("Col {0} out of range (maxium {1})", col, mazeDimensions.Width - 1);
 
                     return -1;
                 }
             }
             else
             {
-                Debug.WriteLine("Row {0} out of range (maximum {1})", row, height-1);
+                Debug.WriteLine("Row {0} out of range (maximum {1})", row, mazeDimensions.Height - 1);
 
                 return -1;
             }
