@@ -9,6 +9,7 @@ namespace Maze2012
     class Cell
     {
         #region CONSTANTS
+
         //  Index of cells in connection list
         const int NORTH = 0;
         const int EAST = 1;
@@ -16,8 +17,10 @@ namespace Maze2012
         const int WEST = 3;
         //  Number of maximum connections
         const int MAXIMUM_CONNECTIONS = 4;
+
         #endregion
         #region PRIVATE_VARIABLES
+
         //  Lookup table for connected cells
         private Cell[] connectedCells;
         //  Walls
@@ -25,8 +28,10 @@ namespace Maze2012
 
         //  Random number generator
         static private Random random = new Random();
+
         #endregion
-        #region PROPERTIES
+        #region PUBLIC_PROPERTIES
+
         //  Connected cells
         public Cell CellToNorth { get { return connectedCells[NORTH]; } set { connectedCells[NORTH] = value; } }
         public Cell CellToSouth { get { return connectedCells[SOUTH]; } set { connectedCells[SOUTH] = value; } }
@@ -42,6 +47,7 @@ namespace Maze2012
         public int NumberOfWalls { get { return countWalls(); } }
         
         #endregion
+
         private List<int> buildListOfPotentialConnections()
         {
             List<int> result = new List<int>();
