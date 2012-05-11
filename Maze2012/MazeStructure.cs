@@ -34,7 +34,7 @@ namespace Maze2012
         List<Cell> cells = new List<Cell>();
 
         //  Random number generator
-        Random r = new Random();
+        private static Random random = new Random();
 
         //  Dimensions of the maze (number of cells)
         Size mazeDimensions;
@@ -335,20 +335,20 @@ namespace Maze2012
             {
                 //  Set up connections
                 if (indexToCoordinate(i).Y > 0)
-                    cells[i].CellToNorth = cells[coordinateToIndex(new Point(indexToCoordinate(i).X, 
-                        indexToCoordinate(i).Y - 1))];
+                    cells[i].CellToNorth = cells[coordinateToIndex(
+                        new Point(indexToCoordinate(i).X, indexToCoordinate(i).Y - 1))];
 
                 if (indexToCoordinate(i).Y < this.mazeDimensions.Height - 1)
-                    cells[i].CellToSouth = cells[coordinateToIndex(new Point(indexToCoordinate(i).X, 
-                        indexToCoordinate(i).Y + 1))];
+                    cells[i].CellToSouth = cells[coordinateToIndex(
+                        new Point(indexToCoordinate(i).X, indexToCoordinate(i).Y + 1))];
 
                 if (indexToCoordinate(i).X > 0)
-                    cells[i].CellToWest = cells[coordinateToIndex(new Point(indexToCoordinate(i).X - 1, 
-                        indexToCoordinate(i).Y))];
+                    cells[i].CellToWest = cells[coordinateToIndex(
+                        new Point(indexToCoordinate(i).X - 1, indexToCoordinate(i).Y))];
 
                 if (indexToCoordinate(i).X < mazeDimensions.Width - 1)
-                    cells[i].CellToEast = cells[coordinateToIndex(new Point(indexToCoordinate(i).X + 1, 
-                        indexToCoordinate(i).Y))];
+                    cells[i].CellToEast = cells[coordinateToIndex(
+                        new Point(indexToCoordinate(i).X + 1, indexToCoordinate(i).Y))];
 
             }
         }
@@ -379,6 +379,8 @@ namespace Maze2012
          *  Take a two dimension cell coordinate and convert it to a 
          *  one dimensional index in the cell array
          *  
+         *  @param Point the coordinates of the corresponding cell
+         *  @return index the index of the cell within the array list
          */
         private int coordinateToIndex(Point coordinate)
         {
@@ -411,11 +413,17 @@ namespace Maze2012
             }
         }
 
+        /**
+         *  Generate a depth first maze
+         *  
+         *  Use the depth first maze creation algorithm to build the
+         *  connections between the cells
+         */
         private void generateDepthFirst()
         {
+            //  Keep tabs on the number of cells visited and the order in
+            //  which they were visited
             Stack<Cell> cellStack = new Stack<Cell>();
-            Random random = new Random();
-
             int visitedCells = 0;
 
             //  Start the maze at a random position
@@ -426,6 +434,7 @@ namespace Maze2012
             cellStack.Push(currentCell);
             visitedCells++;
 
+            //  Output the current position and count to the console
             Debug.WriteLine("Current cell [{0},{1}]",
                 indexToCoordinate(cells.IndexOf(currentCell)).X,
                 indexToCoordinate(cells.IndexOf(currentCell)).Y);
@@ -434,23 +443,31 @@ namespace Maze2012
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
+                //  Potential cell connections represents neighboring
+                //  cells with four walls intact
                 if (currentCell.PotentialCellConnections.Count > 0)
                 {
+                    //  Move in a random direction
                     currentCell = currentCell.demolishRandomWall();
 
+                    //  Put the new cell on the stack
                     cellStack.Push(currentCell);
 
+                    //  Output the current position and count to the console
                     Debug.WriteLine("Current cell [{0},{1}]",
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
                     Debug.WriteLine("Visited cells is now {0}", visitedCells);
 
+                    //  Mark that we have moved to another cell
                     visitedCells++;
                 }
                 else
                 {
+                    //  Go back down the path we previously followed
                     currentCell = cellStack.Pop();
 
+                    //  Output the current position and count to the console
                     Debug.WriteLine("Current cell [{0},{1}]",
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
