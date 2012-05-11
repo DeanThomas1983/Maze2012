@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Maze2012
 {
@@ -29,6 +30,9 @@ namespace Maze2012
         //  Random number generator
         static private Random random = new Random();
 
+        //  Coordinates of the cell in the maze
+        private Point coordinates;
+
         #endregion
         #region PUBLIC_PROPERTIES
 
@@ -45,7 +49,9 @@ namespace Maze2012
         public Boolean EastWall { get { return walls[EAST]; } set { walls[EAST] = value; } }
         public Boolean WestWall { get { return walls[WEST]; } set { walls[WEST] = value; } }
         public int NumberOfWalls { get { return countWalls(); } }
-        
+        //  Coordinates
+        public Point Coordinates { get { return coordinates; } }
+
         #endregion
 
         private List<int> buildListOfPotentialConnections()
@@ -164,6 +170,11 @@ namespace Maze2012
             //  Cell Walls
             walls = new bool[4] { true, true, true, true };
 
+        }
+
+        public Cell(Point coordinates) : this()
+        {
+            this.coordinates = coordinates;
         }
     }
 }

@@ -30,6 +30,8 @@ namespace Maze2012
                 new MazeStructure.generationProgressChangedEventHandler(MazeStructure_generationProgressChanged);
             dataModel.MazeStructure.generationCompleted += new MazeStructure.generationCompletedEventHandler(MazeStructure_generationCompleted);
             
+            dataModel.SolverAgentList.Add(new SimpleSolverAgent());
+
             g = panel1.CreateGraphics();
         }
 
@@ -38,6 +40,8 @@ namespace Maze2012
             g.Clear(Color.Black);
 
             g.DrawImage(dataModel.MazeStructure.TwoDimensionalMap, new Point(0, 0));
+
+            dataModel.SolverAgentList.setAgentStartingCells(dataModel.MazeStructure.Origin);
         }
 
         void MazeStructure_generationProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -56,13 +60,7 @@ namespace Maze2012
 
         private void button2_Click(object sender, EventArgs e)
         {
-            selected++;
-
-            dataModel.MazeStructure.SelectedCellIndex = selected;
-
-            g.Clear(Color.Black);
-
-            g.DrawImage(dataModel.MazeStructure.TwoDimensionalMap, new Point(0, 0));
+            dataModel.SolverAgentList.move();
         }
     }
 }
