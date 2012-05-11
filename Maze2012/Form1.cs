@@ -58,7 +58,7 @@ namespace Maze2012
         {
             selected++;
 
-            dataModel.MazeStructure.SelectedCell = selected;
+            dataModel.MazeStructure.SelectedCellIndex = selected;
 
             g.Clear(Color.Black);
 

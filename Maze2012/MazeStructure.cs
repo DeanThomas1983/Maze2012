@@ -23,10 +23,13 @@ namespace Maze2012
     class MazeStructure
     {
         #region REFERENCES
+
         //  Background worker:  
         //  http://msdn.microsoft.com/en-us/library/system.componentmodel.backgroundworker.aspx     [11-05-2012]
+       
         #endregion
         #region PRIVATE_VARIABLES
+
         //  List of all the cells associated with the current maze
         List<Cell> cells = new List<Cell>();
 
@@ -44,15 +47,17 @@ namespace Maze2012
         Cell terminus;
 
         //  Cell index to highlight
-        int selectedCell = -1;
+        int selectedCellIndex = -1;
 
         //  Holder for 2D representation of the maze
         Bitmap twoDimensionalMap;
 
         //  Background worker for generation algorithms
         BackgroundWorker generationBackgroundWorker = new BackgroundWorker();
+
         #endregion
         #region PUBLIC_PROPERTIES
+
         /**
          *  Return the maze in 2D
          * 
@@ -65,11 +70,30 @@ namespace Maze2012
         /**
          *  Return the index of the selected cell
          * 
-         *  Return the cell currently marked as selected
+         *  Return the cell index currently marked as selected
          * 
          *  @return the index of the selected cell
          */
-        public int SelectedCell { get { return selectedCell; } set { selectedCell = value; } }
+        public int SelectedCellIndex { get { return selectedCellIndex; } set { selectedCellIndex = value; } }
+
+        /**
+         *  Return the selected cell as an object
+         * 
+         *  Return the cell currently marked as selected
+         * 
+         *  @return the selected cell
+         */
+        public Cell SelectedCell { get { return cells[selectedCellIndex]; } }
+
+        /**
+         *  Return the coordinates of selected cell
+         *  
+         *  Return the coordinates of the cell current marked as selected
+         *  
+         *  @return the coordinates of the selected cell
+         */
+        public Point SelectedCellCoordinates { get { return indexToCoordinate(selectedCellIndex); } }
+
         #endregion
         #region DELEGATE_METHODS
 
@@ -222,20 +246,9 @@ namespace Maze2012
             Graphics g = Graphics.FromImage(twoDimensionalMap);
             Pen pen = new Pen(Color.Blue);
 
-            //  Variables to hold the current cell
-            int row = 0;
-            int col = 0;
-
             //  Loop through all the cells in the array list
             for (int i = 0; i < this.cells.Count; i++)
             {
-                //  End of a row
-                if (col == this.mazeDimensions.Width)
-                {
-                    row++;
-                    col = 0;
-                }
-
                 //  Highlight origin in light blue
                 if (cells[i] == origin)
                 {
@@ -251,7 +264,7 @@ namespace Maze2012
                     else
                     {
                         //  Highlight selected cell in yellow
-                        if (i == selectedCell)
+                        if (i == selectedCellIndex)
                         {
                             pen.Color = Color.Yellow;
                         }
@@ -275,29 +288,35 @@ namespace Maze2012
                 //  Draw the north wall (if present)
                 if (cells[i].NorthWall)
                     g.DrawLine(pen,
-                        new Point(cellSize.Width * col, cellSize.Height * row),
-                        new Point(cellSize.Width * (col + 1), cellSize.Height * row));
+                        new Point(cellSize.Width * indexToCoordinate(i).X, 
+                            cellSize.Height * indexToCoordinate(i).Y),
+                        new Point(cellSize.Width * (indexToCoordinate(i).X + 1), 
+                            cellSize.Height * indexToCoordinate(i).Y));
 
                 //  Draw the south wall (if present)
                 if (cells[i].SouthWall)
                     g.DrawLine(pen,
-                        new Point(cellSize.Width * col, (cellSize.Height * (row + 1)) - 1),
-                        new Point(cellSize.Width * (col + 1), (cellSize.Height * (row + 1)) - 1));
+                        new Point(cellSize.Width * indexToCoordinate(i).X, 
+                            (cellSize.Height * (indexToCoordinate(i).Y + 1)) - 1),
+                        new Point(cellSize.Width * (indexToCoordinate(i).X + 1), 
+                            (cellSize.Height * (indexToCoordinate(i).Y + 1)) - 1));
 
                 //  Draw the west wall (if present)
                 if (cells[i].WestWall)
                     g.DrawLine(pen,
-                        new Point(cellSize.Width * col, cellSize.Height * row),
-                        new Point(cellSize.Width * col, cellSize.Height * (row + 1)));
+                        new Point(cellSize.Width * indexToCoordinate(i).X, 
+                            cellSize.Height * indexToCoordinate(i).Y),
+                        new Point(cellSize.Width * indexToCoordinate(i).X, 
+                            cellSize.Height * (indexToCoordinate(i).Y + 1)));
 
                 //  Draw the east wall (if present)
                 if (cells[i].EastWall)
                     g.DrawLine(pen,
-                        new Point((cellSize.Width * (col + 1) - 1), cellSize.Height * row),
-                        new Point((cellSize.Width * (col + 1) - 1), cellSize.Height * (row + 1)));
+                        new Point((cellSize.Width * (indexToCoordinate(i).X + 1) - 1), 
+                            cellSize.Height * indexToCoordinate(i).Y),
+                        new Point((cellSize.Width * (indexToCoordinate(i).X + 1) - 1), 
+                            cellSize.Height * (indexToCoordinate(i).Y + 1)));
 
-                //  Move to the next cell
-                col++;
             }
 
             //  Dispose of graphics objects
@@ -312,32 +331,24 @@ namespace Maze2012
          */
         private void connectCells()
         {
-            int row = 0;
-            int col = 0;
-
             for (int i = 0; i < cells.Count; i++)
             {
-                //  Take the 1D number and convert to a 2D position
-                if (col == this.mazeDimensions.Width)
-                {
-                    row++;
-                    col = 0;
-                }
-
                 //  Set up connections
-                if (row > 0)
-                    cells[i].CellToNorth = cells[coordinateToIndex(row - 1, col)];
+                if (indexToCoordinate(i).Y > 0)
+                    cells[i].CellToNorth = cells[coordinateToIndex(new Point(indexToCoordinate(i).X, 
+                        indexToCoordinate(i).Y - 1))];
 
-                if (row < this.mazeDimensions.Height - 1)
-                    cells[i].CellToSouth = cells[coordinateToIndex(row + 1, col)];
+                if (indexToCoordinate(i).Y < this.mazeDimensions.Height - 1)
+                    cells[i].CellToSouth = cells[coordinateToIndex(new Point(indexToCoordinate(i).X, 
+                        indexToCoordinate(i).Y + 1))];
 
-                if (col > 0)
-                    cells[i].CellToWest = cells[coordinateToIndex(row, col - 1)];
+                if (indexToCoordinate(i).X > 0)
+                    cells[i].CellToWest = cells[coordinateToIndex(new Point(indexToCoordinate(i).X - 1, 
+                        indexToCoordinate(i).Y))];
 
-                if (col < mazeDimensions.Width - 1)
-                    cells[i].CellToEast = cells[coordinateToIndex(row, col + 1)];
-
-                col++;
+                if (indexToCoordinate(i).X < mazeDimensions.Width - 1)
+                    cells[i].CellToEast = cells[coordinateToIndex(new Point(indexToCoordinate(i).X + 1, 
+                        indexToCoordinate(i).Y))];
 
             }
         }
@@ -362,30 +373,39 @@ namespace Maze2012
             return result;
         }
 
-        private int coordinateToIndex(int row, int col)
+        /**
+         *  Convert between coordinates and cell index
+         * 
+         *  Take a two dimension cell coordinate and convert it to a 
+         *  one dimensional index in the cell array
+         *  
+         */
+        private int coordinateToIndex(Point coordinate)
         {
-            if ((row >= 0) && (row < mazeDimensions.Height))
+            if ((coordinate.Y >= 0) && (coordinate.Y < mazeDimensions.Height))
             {
-                if ((col >= 0) && (col < mazeDimensions.Height))
+                if ((coordinate.X >= 0) && (coordinate.X < mazeDimensions.Height))
                 {
                     int result = 0;
 
-                    result = row * mazeDimensions.Width;
+                    result = coordinate.Y * mazeDimensions.Width;
 
-                    result += col;
+                    result += coordinate.X;
 
                     return result;
                 }
                 else
                 {
-                    Debug.WriteLine("Col {0} out of range (maxium {1})", col, mazeDimensions.Width - 1);
+                    Debug.WriteLine("coordinate.X {0} out of range (maxium {1})", 
+                        coordinate.X, mazeDimensions.Width - 1);
 
                     return -1;
                 }
             }
             else
             {
-                Debug.WriteLine("Row {0} out of range (maximum {1})", row, mazeDimensions.Height - 1);
+                Debug.WriteLine("coordinate.Y {0} out of range (maximum {1})", 
+                    coordinate.Y, mazeDimensions.Height - 1);
 
                 return -1;
             }
