@@ -1,4 +1,16 @@
-﻿using System;
+﻿/**
+ *  @file MazeStructure.cs
+ *  @author Dean Thomas
+ *  @version 0.1
+ *  
+ *  @section LICENSE
+ *  
+ *  @section DESCRIPTION
+ *  
+ *  The MazeStructure class is a class to hold an array of cells to form a maze.  Also includes
+ *  methods to generate the maze using different algorithms.
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,6 +52,7 @@ namespace Maze2012
         //  Background worker for generation algorithms
         BackgroundWorker generationBackgroundWorker = new BackgroundWorker();
         #endregion
+        #region PUBLIC_PROPERTIES
         /**
          *  Return the maze in 2D
          * 
@@ -48,6 +61,7 @@ namespace Maze2012
          *  @return the map as a bitmap
          */
         public Bitmap TwoDimensionalMap { get { createTwoDimensionalMap(); return twoDimensionalMap; } }
+
         /**
          *  Return the index of the selected cell
          * 
@@ -56,46 +70,26 @@ namespace Maze2012
          *  @return the index of the selected cell
          */
         public int SelectedCell { get { return selectedCell; } set { selectedCell = value; } }
-
-
-        #region CONSTRUCTOR_METHODS
-        public MazeStructure() : this(new Size(16, 16), new Size(16, 16)) { }
-
-        public MazeStructure(Size mazeDimensions, Size cellSize)
-        {
-            //  Indent console output
-            Debug.Indent();
-
-            //  Set class variables
-            this.mazeDimensions = mazeDimensions;
-            this.cellSize = cellSize;
-
-            //  Set up the background worker for maze generation
-            this.generationBackgroundWorker.WorkerReportsProgress = true;
-            this.generationBackgroundWorker.DoWork += new DoWorkEventHandler(generationBackgroundWorker_DoWork);
-            this.generationBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(generationBackgroundWorker_ProgressChanged);
-            this.generationBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(generationBackgroundWorker_RunWorkerCompleted);
-
-
-            //  Clear the maze and setup connections
-            resetMaze();
-        }
         #endregion
         #region DELEGATE_METHODS
+
         //  Handle progression event in maze generation
         public delegate void generationProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
         //  Handle completion event in maze generation
         public delegate void generationCompletedEventHandler(object sender, RunWorkerCompletedEventArgs e);
-        #endregion
 
+        #endregion
         #region EVENTS
+
         //  Raise an event to be handled by the parent object for completion of maze generation
         public event generationCompletedEventHandler generationCompleted;
+
         //  Raise an event to be handled by the parent object for progression of maze generation
         public event generationProgressChangedEventHandler generationProgressChanged;
-        #endregion
 
+        #endregion
         #region BACKGROUND_WORKER_METHODS
+
         /**
          *  Maze generation progressed
          *  
@@ -142,8 +136,52 @@ namespace Maze2012
             //  Later will add additional algorithms
             this.generateDepthFirst();
         }
-        #endregion
 
+        #endregion
+        #region CONSTRUCTOR_METHODS
+
+        /**
+         *  Default constructor
+         *  
+         *  Construct a new maze using the default constructor
+         */
+        public MazeStructure() : this(new Size(16, 16), new Size(16, 16)) { }
+
+        /**
+         *  Overloaded constructor
+         *  
+         *  Construct a new maze using the specified parameters
+         *  
+         *  @param mazeDimensions number of cells in the x and y dimensions
+         *  @param cellSize the size of each cell in pixels in the x and y dimensions
+         */
+        public MazeStructure(Size mazeDimensions, Size cellSize)
+        {
+            //  Indent console output
+            Debug.Indent();
+
+            //  Set class variables
+            this.mazeDimensions = mazeDimensions;
+            this.cellSize = cellSize;
+
+            //  Set up the background worker for maze generation
+            this.generationBackgroundWorker.WorkerReportsProgress = true;
+            this.generationBackgroundWorker.DoWork += new DoWorkEventHandler(generationBackgroundWorker_DoWork);
+            this.generationBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(generationBackgroundWorker_ProgressChanged);
+            this.generationBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(generationBackgroundWorker_RunWorkerCompleted);
+
+
+            //  Clear the maze and setup connections
+            resetMaze();
+        }
+
+        #endregion
+        #region PRIVATE_METHODS
+        /**
+         *  Reset the maze
+         *  
+         *  Clear any existing maze structure and rebuild all walls between cells
+         */
         private void resetMaze()
         {
             //  Clear any previous structures
@@ -164,23 +202,34 @@ namespace Maze2012
             connectCells();
         }
 
+        /**
+         *  Create a two dimensional representation of the maze
+         *  
+         *  Create a two dimensional representation of the maze and store it
+         *  internally within the maze object
+         */
         private void createTwoDimensionalMap()
         {
+            //  If a map currently exists dispose of it
             if (twoDimensionalMap != null)
                 twoDimensionalMap.Dispose();
 
+            //  Create a bitmap large enough to hold the map
             twoDimensionalMap = new Bitmap(this.mazeDimensions.Width * cellSize.Width,
                 this.mazeDimensions.Height * cellSize.Height);
 
+            //  Create graphics objects to draw the map
             Graphics g = Graphics.FromImage(twoDimensionalMap);
-
             Pen pen = new Pen(Color.Blue);
 
+            //  Variables to hold the current cell
             int row = 0;
             int col = 0;
 
+            //  Loop through all the cells in the array list
             for (int i = 0; i < this.cells.Count; i++)
             {
+                //  End of a row
                 if (col == this.mazeDimensions.Width)
                 {
                     row++;
@@ -201,9 +250,9 @@ namespace Maze2012
                     }
                     else
                     {
+                        //  Highlight selected cell in yellow
                         if (i == selectedCell)
                         {
-                            //  Highlight selected cell in yellow
                             pen.Color = Color.Yellow;
                         }
                         else
@@ -247,19 +296,20 @@ namespace Maze2012
                         new Point((cellSize.Width * (col + 1) - 1), cellSize.Height * row),
                         new Point((cellSize.Width * (col + 1) - 1), cellSize.Height * (row + 1)));
 
+                //  Move to the next cell
                 col++;
             }
 
+            //  Dispose of graphics objects
             pen.Dispose();
-
             g.Dispose();
         }
 
-        public void generateMaze()
-        {
-            generationBackgroundWorker.RunWorkerAsync();
-        }
-
+        /**
+         *  Build connections between cells
+         *  
+         *  Allow the cells in the maze to be aware of their immediate neighbours
+         */
         private void connectCells()
         {
             int row = 0;
@@ -292,10 +342,20 @@ namespace Maze2012
             }
         }
 
+        /**
+         *  Convert between cell index and coordinates
+         *  
+         *  Take a one dimensional index and covert it to a two dimensional
+         *  coordinate within the maze
+         *  
+         *  @param index the index of the cell within the array list
+         *  @return Point the coordinates of the corresponding cell
+         */
         private Point indexToCoordinate(int index)
         {
             Point result = new Point();
 
+            //  Calculate X and Y coordinates
             result.X = index % this.mazeDimensions.Width;
             result.Y = index / this.mazeDimensions.Width;
 
@@ -384,5 +444,20 @@ namespace Maze2012
             //  Mark the exit of the maze
             this.terminus = currentCell;
         }
+        #endregion
+        #region PUBLIC_METHODS
+
+        /**
+         *  Generate a new maze
+         *  
+         *  Generate a new maze; handled on a background thread
+         */
+        public void generateMaze()
+        {
+            //  Start the generator thread
+            generationBackgroundWorker.RunWorkerAsync();
+        }
+
+        #endregion
     }
 }
