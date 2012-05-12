@@ -20,6 +20,10 @@ namespace Maze2012
         public Form1()
         {
             InitializeComponent();
+
+            SharpGLForm sharpGLForm = new SharpGLForm();
+
+            sharpGLForm.Show();
         }
 
         private void Form1_Load(object sender, EventArgs e)
