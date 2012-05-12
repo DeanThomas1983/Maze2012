@@ -66,6 +66,73 @@ namespace Maze2012
             directionOfTravel = result;
         }
 
+        /**
+         *  Find the next cell clockwise
+         *  
+         *  Using the current heading of the agent find the nearest
+         *  accessible cell in a clockwise direction
+         *  
+         *  @return the cell to move into
+         */
+        protected Cell cellClockwise()
+        {
+            switch (this.DirectionOfTravel)
+            {
+                case DirectionOfTravel.NORTH:
+                    //  Check E->N>W->S
+                    if (!CurrentCell.EastWall)
+                        return CurrentCell.CellToEast;
+                    else
+                        if (!currentCell.NorthWall)
+                            return CurrentCell.CellToNorth;
+                        else
+                            if (!currentCell.WestWall)
+                                return CurrentCell.CellToWest;
+                            else
+                                return CurrentCell.CellToSouth;
+                case DirectionOfTravel.EAST:
+                    //  Check S->E->N->W
+                    if (!currentCell.SouthWall)
+                        return CurrentCell.CellToSouth;
+                    else
+                        if (!currentCell.EastWall)
+                            return CurrentCell.CellToEast;
+                        else
+                            if (!currentCell.NorthWall)
+                                return CurrentCell.CellToNorth;
+                            else
+                                return CurrentCell.CellToWest;
+                case DirectionOfTravel.SOUTH:
+                    //  Check W->S->E->N
+                    if (!currentCell.WestWall)
+                        return CurrentCell.CellToWest;
+                    else
+                        if (!currentCell.SouthWall)
+                            return CurrentCell.CellToSouth;
+                        else
+                            if (!currentCell.EastWall)
+                                return CurrentCell.CellToEast;
+                            else
+                                return CurrentCell.CellToNorth;
+                case DirectionOfTravel.WEST:
+                    //  Check N->W->S->E
+                    if (!currentCell.NorthWall)
+                        return CurrentCell.CellToNorth;
+                    else
+                        if (!currentCell.WestWall)
+                            return CurrentCell.CellToWest;
+                        else
+                            if (!currentCell.SouthWall)
+                                return CurrentCell.CellToSouth;
+                            else
+                                return CurrentCell.CellToEast;
+                default:
+                    Debug.WriteLine("Could not detect next cell clockwise");
+
+                    return this.CurrentCell;
+            }
+        }
+
         public void setStartingCell(Cell startingCell)
         {
             this.previousCell = null;
