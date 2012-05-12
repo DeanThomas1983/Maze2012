@@ -59,6 +59,13 @@ namespace Maze2012
         #region PUBLIC_PROPERTIES
 
         /**
+         *  Starting point of the maze
+         *  
+         *  Return the starting cell of the maze
+         */
+        public Cell Origin { get { return origin; } }
+
+        /**
          *  Return the maze in 2D
          * 
          *  Return a map of the maze in 2 dimensions
@@ -93,6 +100,12 @@ namespace Maze2012
          *  @return the coordinates of the selected cell
          */
         public Point SelectedCellCoordinates { get { return indexToCoordinate(selectedCellIndex); } }
+
+        //  Bounding rect
+        public Rectangle getBoundingRectangle(Cell cell)
+        {
+            return new Rectangle(new Point(cell.Coordinates.X * cellSize.Width,cell.Coordinates.Y * cellSize.Height),cellSize);
+        }
 
         #endregion
         #region DELEGATE_METHODS
@@ -217,7 +230,7 @@ namespace Maze2012
             //  Create the array of cells (as a 1D list)
             for (int i = 0; i < mazeDimensions.Width * mazeDimensions.Height; i++)
             {
-                Cell newCell = new Cell();
+                Cell newCell = new Cell(indexToCoordinate(i));
 
                 cells.Add(newCell);
             }
