@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Maze2012
 {
+    /**
+     *  Define direction of travel as an enumerated type
+     */
     enum DirectionOfTravel
     {
         NORTH,
