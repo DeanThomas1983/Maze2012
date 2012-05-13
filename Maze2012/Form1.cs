@@ -13,6 +13,8 @@ namespace Maze2012
     {
         Graphics g;
         DataModel dataModel;
+        SharpGLForm sharpGLForm = new SharpGLForm();
+
         int selected = 0;
 
         int i;
@@ -21,8 +23,7 @@ namespace Maze2012
         {
             InitializeComponent();
 
-            SharpGLForm sharpGLForm = new SharpGLForm();
-
+            
             sharpGLForm.Show();
         }
 
@@ -37,6 +38,9 @@ namespace Maze2012
             dataModel.SolverAgentList.Add(new SimpleSolverAgent());
 
             g = panel1.CreateGraphics();
+
+            sharpGLForm.DataModel = dataModel;
+
         }
 
         void MazeStructure_generationCompleted(object sender, RunWorkerCompletedEventArgs e)

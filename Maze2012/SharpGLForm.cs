@@ -15,6 +15,14 @@ namespace Maze2012
     /// </summary>
     public partial class SharpGLForm : Form
     {
+        private DataModel dataModel;
+
+        internal DataModel DataModel
+        {
+            get { return dataModel; }
+            set { dataModel = value; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SharpGLForm"/> class.
         /// </summary>
@@ -23,6 +31,7 @@ namespace Maze2012
             InitializeComponent();
         }
 
+        
         /// <summary>
         /// Handles the OpenGLDraw event of the openGLControl control.
         /// </summary>
@@ -42,39 +51,64 @@ namespace Maze2012
             //  Rotate around the Y axis.
             gl.Rotate(rotation, 0.0f, 1.0f, 0.0f);
 
-            //  Draw a coloured pyramid.
-            gl.Begin(OpenGL.GL_TRIANGLES);
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-            gl.End();
+            drawMaze(gl);
 
             //  Nudge the rotation.
             rotation += 3.0f;
         }
 
+        private void drawMaze(OpenGL gl)
+        {
+            if (dataModel.MazeStructure.Origin != null)
+            {
+                //  Draw a coloured pyramid.
+                gl.Begin(OpenGL.GL_TRIANGLES);
 
+
+                gl.Color(0.0f, 1.0f, 0.0f);
+
+                float x = dataModel.MazeStructure.Origin.Coordinates.X;
+                float y = dataModel.MazeStructure.Origin.Coordinates.Y;
+                float z = 1.0f;
+
+                gl.Vertex(x, y, z);
+
+                gl.DrawText(0, 0, 128.0f, 128.0f, 128.0f, "Arial", 12.0f, "Drawing maze");
+
+                /*
+                gl.Color(1.0f, 0.0f, 0.0f);
+                gl.Vertex(0.0f, 1.0f, 0.0f);
+                gl.Color(0.0f, 1.0f, 0.0f);
+                gl.Vertex(-1.0f, -1.0f, 1.0f);
+                gl.Color(0.0f, 0.0f, 1.0f);
+                gl.Vertex(1.0f, -1.0f, 1.0f);
+                gl.Color(1.0f, 0.0f, 0.0f);
+                gl.Vertex(0.0f, 1.0f, 0.0f);
+                gl.Color(0.0f, 0.0f, 1.0f);
+                gl.Vertex(1.0f, -1.0f, 1.0f);
+                gl.Color(0.0f, 1.0f, 0.0f);
+                gl.Vertex(1.0f, -1.0f, -1.0f);
+                gl.Color(1.0f, 0.0f, 0.0f);
+                gl.Vertex(0.0f, 1.0f, 0.0f);
+                gl.Color(0.0f, 1.0f, 0.0f);
+                gl.Vertex(1.0f, -1.0f, -1.0f);
+                gl.Color(0.0f, 0.0f, 1.0f);
+                gl.Vertex(-1.0f, -1.0f, -1.0f);
+                gl.Color(1.0f, 0.0f, 0.0f);
+                gl.Vertex(0.0f, 1.0f, 0.0f);
+                gl.Color(0.0f, 0.0f, 1.0f);
+                gl.Vertex(-1.0f, -1.0f, -1.0f);
+                gl.Color(0.0f, 1.0f, 0.0f);
+                gl.Vertex(-1.0f, -1.0f, 1.0f);
+                */
+                gl.End();
+            }
+
+            if (dataModel != null)
+                gl.DrawText(0, 0, 128.0f, 128.0f, 128.0f, "Arial", 12.0f, dataModel.SolverAgentList.Count.ToString());
+
+            
+        }
 
         /// <summary>
         /// Handles the OpenGLInitialized event of the openGLControl control.
