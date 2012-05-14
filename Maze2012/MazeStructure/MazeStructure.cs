@@ -71,7 +71,7 @@ namespace Maze2012
          *  
          *  @return the map as a bitmap
          */
-        public Bitmap TwoDimensionalMap { get { createTwoDimensionalMap(); return twoDimensionalMap; } }
+        public Bitmap TwoDimensionalMap { get { createTwoDimensionalMap(true); return twoDimensionalMap; } }
 
         /**
          *  Return the index of the selected cell
@@ -100,7 +100,7 @@ namespace Maze2012
          */
         public Point SelectedCellCoordinates { get { return indexToCoordinate(selectedCellIndex); } }
 
-        //  Bounding rect
+        //  Bounding rectangle
         public Rectangle getBoundingRectangle(Cell cell)
         {
             return new Rectangle(new Point(cell.Coordinates.X * cellSize.Width,cell.Coordinates.Y * cellSize.Height),cellSize);
@@ -181,7 +181,7 @@ namespace Maze2012
          *  
          *  Construct a new maze using the default constructor
          */
-        public MazeStructure() : this(new Size(16, 16), new Size(16, 16)) { }
+        public MazeStructure() : this(new Size(8, 8), new Size(32, 32)) { }
 
         /**
          *  Overloaded constructor
@@ -243,8 +243,10 @@ namespace Maze2012
          *  
          *  Create a two dimensional representation of the maze and store it
          *  internally within the maze object
+         *  
+         *  @param show cell distance from origin (false by default)
          */
-        private void createTwoDimensionalMap()
+        private void createTwoDimensionalMap(Boolean showDistanceFromOrigin = false)
         {
             //  If a map currently exists dispose of it
             if (twoDimensionalMap != null)
@@ -297,6 +299,8 @@ namespace Maze2012
                     }
                 }
 
+                //  TODO: move the drawing function to individual cells?
+
                 //  Draw the north wall (if present)
                 if (cells[i].NorthWall)
                     g.DrawLine(pen,
@@ -328,6 +332,19 @@ namespace Maze2012
                             cellSize.Height * indexToCoordinate(i).Y),
                         new Point((cellSize.Width * (indexToCoordinate(i).X + 1) - 1), 
                             cellSize.Height * (indexToCoordinate(i).Y + 1)));
+
+                //  HACK:   tidy this code up, it is difficult to read
+                //  Draw the distance from the origin
+                if (showDistanceFromOrigin)
+                {
+                    g.DrawString(cells[i].DistanceFromOrigin.ToString(),
+                        new Font("Arial",12),
+                        new SolidBrush(Color.Blue),
+                        new RectangleF(cells[i].Coordinates.X * cellSize.Width,
+                            cells[i].Coordinates.Y * cellSize.Height,
+                            cellSize.Width,
+                            cellSize.Height));
+                }
 
             }
 
@@ -410,7 +427,7 @@ namespace Maze2012
                 }
                 else
                 {
-                    Debug.WriteLine("coordinate.X {0} out of range (maxium {1})", 
+                    Debug.WriteLine("coordinate.X {0} out of range (maximum {1})", 
                         coordinate.X, mazeDimensions.Width - 1);
 
                     return -1;
@@ -437,6 +454,7 @@ namespace Maze2012
             //  which they were visited
             Stack<Cell> cellStack = new Stack<Cell>();
             int visitedCells = 0;
+            int distanceFromOrigin = 0;
 
             //  Start the maze at a random position
             Cell currentCell = cells[random.Next(cells.Count)];
@@ -455,15 +473,21 @@ namespace Maze2012
             //  Repeat until we have visited ever cell in the maze
             while (visitedCells < cells.Count)
             {
-                //  Potential cell connections represents neighboring
+                //  Potential cell connections represents neighbouring
                 //  cells with four walls intact
                 if (currentCell.PotentialCellConnections.Count > 0)
                 {
+                    //  Keep track of distance from origin
+                    currentCell.DistanceFromOrigin = distanceFromOrigin;
+
                     //  Move in a random direction
                     currentCell = currentCell.demolishRandomWall();
 
                     //  Put the new cell on the stack
                     cellStack.Push(currentCell);
+
+                    //  Increment distance from origin by 1
+                    distanceFromOrigin++;
 
                     //  Output the current position and count to the console
                     Debug.WriteLine("Current cell [{0},{1}]",
@@ -478,6 +502,9 @@ namespace Maze2012
                 {
                     //  Go back down the path we previously followed
                     currentCell = cellStack.Pop();
+
+                    //  As we are going backwards reduce the distance from origin by 1
+                    distanceFromOrigin--;
 
                     //  Output the current position and count to the console
                     Debug.WriteLine("Current cell [{0},{1}]",

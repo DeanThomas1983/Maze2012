@@ -45,6 +45,9 @@ namespace Maze2012
         //  Coordinates of the cell in the maze
         private Point coordinates;
 
+        //  Distance from the origin
+        private int distanceFromOrigin;
+
         #endregion
         #region PUBLIC_PROPERTIES
         //  Connected cells
@@ -63,7 +66,19 @@ namespace Maze2012
         //  Coordinates
         public Point Coordinates { get { return coordinates; } }
         
-
+        /**
+         *  Distance from the origin cell
+         *  
+         *  Return the distance from the origin cell using the shortest path
+         *  
+         *  @return the distance from the origin as an integer
+         */
+        public int DistanceFromOrigin
+        {
+            get { return distanceFromOrigin; }
+            set { distanceFromOrigin = value; }
+        }
+         
         #endregion
         #region PRIVATE_METHODS
 
@@ -251,19 +266,24 @@ namespace Maze2012
             //  Cell Walls
             walls = new bool[4] { true, true, true, true };
 
+            //  Distance from origin
+            distanceFromOrigin = 0;
         }
 
         /**
          *  Override constructor
          *  
-         *  Call the default constructor and then store the cooridates
+         *  Call the default constructor and then store the coordinates
          *  of where the cell is in the maze object.
+         *  
+         *  @param coordinates a 2 dimensional pont in space relating to the distance in
+         *  the parent maze object
          */
         public Cell(Point coordinates)
             : this()
         {
             this.coordinates = coordinates;
-        } 
+        }
 
         #endregion
     }
