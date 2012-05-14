@@ -1,7 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿/**
+ *  @file SolverAgent.cs
+ *  @author Dean Thomas
+ *  @version 0.1
+ *  
+ *  @section LICENSE
+ *  
+ *  @section DESCRIPTION
+ *  
+ *  The SolverAgent class is used as a prototype for more
+ *  intelligent solvers.  It is used to provide some basic
+ *  functionality for the AI agents and define the methods
+ *  required for their implementation.
+ */
+
 using System.Diagnostics;
 
 namespace Maze2012
@@ -151,7 +162,6 @@ namespace Maze2012
                 Debug.WriteLine("Cannot move agent as it has no position assigned");
 
             calculateDirectionOfTravel();
-
 
             Debug.WriteLine("Previous position: " + previousCell.Coordinates.ToString()
                 + "; Current position: " + currentCell.Coordinates.ToString());

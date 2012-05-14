@@ -1,7 +1,19 @@
-﻿using System;
+﻿/**
+ *  @file Cell.cs
+ *  @author Dean Thomas
+ *  @version 0.1
+ *  
+ *  @section LICENSE
+ *  
+ *  @section DESCRIPTION
+ *  
+ *  The cell class holds information regarding individual cells within
+ *  the maze structure.  Also contains functions to navigate between
+ *  cells on a cell by cell basis.
+ */
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -41,7 +53,7 @@ namespace Maze2012
         public Cell CellToEast { get { return connectedCells[EAST]; } set { connectedCells[EAST] = value; } }
         public Cell CellToWest { get { return connectedCells[WEST]; } set { connectedCells[WEST] = value; } }
         //  List of valid connections
-        public List<int> PotentialCellConnections { get { return buildListOfPotentialConnections(); } }
+        public List<int> PotentialCellConnections { get { return buildListOfNeighboursWithAllWallsIntact(); } }
         //  Walls
         public Boolean NorthWall { get { return walls[NORTH]; } set { walls[NORTH] = value; } }
         public Boolean SouthWall { get { return walls[SOUTH]; } set { walls[SOUTH] = value; } }
@@ -53,8 +65,17 @@ namespace Maze2012
         
 
         #endregion
+        #region PRIVATE_METHODS
 
-        private List<int> buildListOfPotentialConnections()
+        /**
+         *  Build a list of neighbouring cells with four walls
+         *  
+         *  Build a list of neighbouring cells with four walls.  Required
+         *  as part of the depth first algorithm
+         *  
+         *  @return a list of the directions which have intact cells (if any)
+         */
+        private List<int> buildListOfNeighboursWithAllWallsIntact()
         {
             List<int> result = new List<int>();
 
@@ -74,22 +95,14 @@ namespace Maze2012
             return result;
         }
 
-        public Cell demolishRandomWall()
-        {
-            List<int> potentialCellConnections = this.buildListOfPotentialConnections();
-
-            int r = random.Next(potentialCellConnections.Count);
-
-            switch (potentialCellConnections[r])
-            {
-                case NORTH: demolishNorthWall(); return CellToNorth;
-                case SOUTH: demolishSouthWall(); return CellToSouth;
-                case EAST: demolishEastWall(); return CellToEast;
-                case WEST: demolishWestWall(); return CellToWest;
-                default: Debug.WriteLine("Invalid cell selected for demolishion"); return null;
-            }
-        }
-
+        /**
+         *  Demolish the north wall
+         * 
+         *  Demolish the wall between this cell and the one to the north.
+         *  Both this wall and the south wall of north cell are demolished.
+         *  
+         *  @return true if sucessfull
+         */ 
         private Boolean demolishNorthWall()
         {
             if ((connectedCells[NORTH] != null) && (this.NorthWall))
@@ -105,6 +118,14 @@ namespace Maze2012
             }
         }
 
+        /**
+         *  Demolish the south wall
+         * 
+         *  Demolish the wall between this cell and the one to the south.
+         *  Both this wall and the north wall of south cell are demolished.
+         *  
+         *  @return true if successful
+         */
         private Boolean demolishSouthWall()
         {
             if ((connectedCells[SOUTH] != null) && (this.SouthWall))
@@ -120,6 +141,14 @@ namespace Maze2012
             }
         }
 
+        /**
+         *  Demolish the east wall
+         * 
+         *  Demolish the wall between this cell and the one to the east.
+         *  Both this wall and the west wall of east cell are demolished.
+         *  
+         *  @return true if sucessfull
+         */
         private Boolean demolishEastWall()
         {
             if ((connectedCells[EAST] != null) && (this.EastWall))
@@ -135,6 +164,14 @@ namespace Maze2012
             }
         }
 
+        /**
+         *  Demolish the west wall
+         * 
+         *  Demolish the wall between this cell and the one to the west.
+         *  Both this wall and the east wall of west cell are demolished.
+         *  
+         *  @return true if sucessfull
+         */
         private Boolean demolishWestWall()
         {
             if ((connectedCells[WEST] != null) && (this.WestWall))
@@ -150,6 +187,13 @@ namespace Maze2012
             }
         }
 
+        /**
+         *  Count the number of intact walls
+         *  
+         *  Count how many walls the cell has intact.
+         *  
+         *  @param the number of walls as an integer.
+         */
         private int countWalls()
         {
             int result = 0;
@@ -162,6 +206,43 @@ namespace Maze2012
             return result;
         }
 
+        #endregion
+        #region PUBLIC_METHODS
+
+        /**
+         *  Pick a random wall to demolish
+         * 
+         *  First builds a list of cells with all their walls intact and
+         *  then randomly picks one of these to demolish.
+         *  
+         *  @return the cell which is the neighbour that has been demolished
+         *  or null in the case of an invalid selection.
+         */
+        public Cell demolishRandomWall()
+        {
+            List<int> potentialCellConnections = this.buildListOfNeighboursWithAllWallsIntact();
+
+            int r = random.Next(potentialCellConnections.Count);
+
+            switch (potentialCellConnections[r])
+            {
+                case NORTH: demolishNorthWall(); return CellToNorth;
+                case SOUTH: demolishSouthWall(); return CellToSouth;
+                case EAST: demolishEastWall(); return CellToEast;
+                case WEST: demolishWestWall(); return CellToWest;
+                default: Debug.WriteLine("Invalid cell selected for demolition"); return null;
+            }
+        }
+        
+        #endregion
+        #region CONSTRUCTOR_METHODS
+
+        /**
+         *  Default constructor
+         *  
+         *  Create a new cell and set up lookup tables for connections
+         *  and set all walls to intact
+         */
         public Cell()
         {
             //  List of connected cells
@@ -172,9 +253,18 @@ namespace Maze2012
 
         }
 
-        public Cell(Point coordinates) : this()
+        /**
+         *  Override constructor
+         *  
+         *  Call the default constructor and then store the cooridates
+         *  of where the cell is in the maze object.
+         */
+        public Cell(Point coordinates)
+            : this()
         {
             this.coordinates = coordinates;
-        }
+        } 
+
+        #endregion
     }
 }

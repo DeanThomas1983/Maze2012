@@ -10,13 +10,12 @@
  *  The MazeStructure class is a class to hold an array of cells to form a maze.  Also includes
  *  methods to generate the maze using different algorithms.
  */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 
 namespace Maze2012
 {
