@@ -51,18 +51,22 @@ namespace Maze2012
         #endregion
         #region PUBLIC_PROPERTIES
         //  Connected cells
+
         public Cell CellToNorth { get { return connectedCells[NORTH]; } set { connectedCells[NORTH] = value; } }
         public Cell CellToSouth { get { return connectedCells[SOUTH]; } set { connectedCells[SOUTH] = value; } }
         public Cell CellToEast { get { return connectedCells[EAST]; } set { connectedCells[EAST] = value; } }
         public Cell CellToWest { get { return connectedCells[WEST]; } set { connectedCells[WEST] = value; } }
+
         //  List of valid connections
         public List<int> PotentialCellConnections { get { return buildListOfNeighboursWithAllWallsIntact(); } }
+
         //  Walls
         public Boolean NorthWall { get { return walls[NORTH]; } set { walls[NORTH] = value; } }
         public Boolean SouthWall { get { return walls[SOUTH]; } set { walls[SOUTH] = value; } }
         public Boolean EastWall { get { return walls[EAST]; } set { walls[EAST] = value; } }
         public Boolean WestWall { get { return walls[WEST]; } set { walls[WEST] = value; } }
         public int NumberOfWalls { get { return countWalls(); } }
+
         //  Coordinates
         public Point Coordinates { get { return coordinates; } }
         
@@ -116,7 +120,7 @@ namespace Maze2012
          *  Demolish the wall between this cell and the one to the north.
          *  Both this wall and the south wall of north cell are demolished.
          *  
-         *  @return true if sucessfull
+         *  @return true if successful
          */ 
         private Boolean demolishNorthWall()
         {
@@ -162,7 +166,7 @@ namespace Maze2012
          *  Demolish the wall between this cell and the one to the east.
          *  Both this wall and the west wall of east cell are demolished.
          *  
-         *  @return true if sucessfull
+         *  @return true if successful
          */
         private Boolean demolishEastWall()
         {
@@ -185,7 +189,7 @@ namespace Maze2012
          *  Demolish the wall between this cell and the one to the west.
          *  Both this wall and the east wall of west cell are demolished.
          *  
-         *  @return true if sucessfull
+         *  @return true if successful
          */
         private Boolean demolishWestWall()
         {
@@ -276,7 +280,7 @@ namespace Maze2012
          *  Call the default constructor and then store the coordinates
          *  of where the cell is in the maze object.
          *  
-         *  @param coordinates a 2 dimensional pont in space relating to the distance in
+         *  @param coordinates a 2 dimensional point in space relating to the distance in
          *  the parent maze object
          */
         public Cell(Point coordinates)
