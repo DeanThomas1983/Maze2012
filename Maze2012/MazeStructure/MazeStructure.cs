@@ -33,7 +33,12 @@ namespace Maze2012
         List<Cell> cells = new List<Cell>();
 
         //  Random number generator
+        #if FIXED_MAZE_LAYOUT
+        private static Random random = new Random(1);
+        #else
         private static Random random = new Random();
+        #endif
+
 
         //  Dimensions of the maze (number of cells)
         Size mazeDimensions;
@@ -181,7 +186,7 @@ namespace Maze2012
          *  
          *  Construct a new maze using the default constructor
          */
-        public MazeStructure() : this(new Size(8, 8), new Size(32, 32)) { }
+        public MazeStructure() : this(new Size(4, 4), new Size(64, 64)) { }
 
         /**
          *  Overloaded constructor

@@ -40,8 +40,11 @@ namespace Maze2012
         private bool[] walls;
 
         //  Random number generator
-        static private Random random = new Random();
-
+#if FIXED_MAZE_LAYOUT
+        private static Random random = new Random(1);
+#else
+        private static Random random = new Random();
+#endif
         //  Coordinates of the cell in the maze
         private Point coordinates;
 

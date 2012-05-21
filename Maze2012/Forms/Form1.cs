@@ -23,8 +23,9 @@ namespace Maze2012
         {
             InitializeComponent();
 
-            
+#if !NO_OPEN_GL
             sharpGLForm.Show();
+#endif
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -39,8 +40,9 @@ namespace Maze2012
 
             g = panel1.CreateGraphics();
 
+#if !NO_OPEN_GL
             sharpGLForm.DataModel = dataModel;
-
+#endif
         }
 
         void MazeStructure_generationCompleted(object sender, RunWorkerCompletedEventArgs e)
