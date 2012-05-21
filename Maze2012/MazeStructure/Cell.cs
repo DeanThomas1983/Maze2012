@@ -23,6 +23,8 @@ namespace Maze2012
     {
         #region CONSTANTS
 
+        public static int DISTANCE_UNINITILAISED = -1;
+
         //  Index of cells in connection list
         const int NORTH = 0;
         const int EAST = 1;
@@ -274,7 +276,7 @@ namespace Maze2012
             walls = new bool[4] { true, true, true, true };
 
             //  Distance from origin
-            distanceFromOrigin = 0;
+            distanceFromOrigin = DISTANCE_UNINITILAISED;
         }
 
         /**

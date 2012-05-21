@@ -186,7 +186,7 @@ namespace Maze2012
          *  
          *  Construct a new maze using the default constructor
          */
-        public MazeStructure() : this(new Size(4, 4), new Size(64, 64)) { }
+        public MazeStructure() : this(new Size(8, 8), new Size(32, 32)) { }
 
         /**
          *  Overloaded constructor
@@ -460,11 +460,15 @@ namespace Maze2012
             //  which they were visited
             Stack<Cell> cellStack = new Stack<Cell>();
             int visitedCells = 0;
-            int distanceFromOrigin = 0;
+            Boolean previouslyPushedToStack = true;
 
+            //  Distance from origin
+            int distanceFromOrigin = 0;
+            
             //  Start the maze at a random position
             Cell currentCell = cells[random.Next(cells.Count)];
             origin = currentCell;
+            currentCell.DistanceFromOrigin = distanceFromOrigin;
 
             //  Push the origin onto the stack
             cellStack.Push(currentCell);
@@ -483,9 +487,6 @@ namespace Maze2012
                 //  cells with four walls intact
                 if (currentCell.PotentialCellConnections.Count > 0)
                 {
-                    //  Keep track of distance from origin
-                    currentCell.DistanceFromOrigin = distanceFromOrigin;
-
                     //  Move in a random direction
                     currentCell = currentCell.demolishRandomWall();
 
@@ -498,6 +499,7 @@ namespace Maze2012
                     //  Mark that we have moved to another cell
                     visitedCells++;
 
+                    
                     //  Output the current position and count to the console
                     Debug.WriteLine("Current cell [{0},{1}]",
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
@@ -507,14 +509,24 @@ namespace Maze2012
                     //  Increment distance from origin by 1
                     distanceFromOrigin++;
 
+                    if (currentCell.DistanceFromOrigin == Cell.DISTANCE_UNINITILAISED)
+                        currentCell.DistanceFromOrigin = distanceFromOrigin;
+                    
                     //  Output distance from origin
                     Debug.WriteLine("Distance from origin is now {0}",
                         distanceFromOrigin);
+
+                    previouslyPushedToStack = true;
                 }
                 else
                 {
                     //  Go back down the path we previously followed
                     currentCell = cellStack.Pop();
+
+                    //  If the previous operation was a push, we need to
+                    //  pop the 
+                    if (previouslyPushedToStack == true)
+                        currentCell = cellStack.Pop();
 
                     //  Output that we are heading down through the stack
                     Debug.WriteLine("Returning to previously visited cell");
@@ -523,13 +535,17 @@ namespace Maze2012
                     Debug.WriteLine("Current cell [{0},{1}]",
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
-
+                    
                     //  As we are going backwards reduce the distance from origin by 1
                     distanceFromOrigin--;
 
                     //  Output distance from origin
                     Debug.WriteLine("Distance from origin is now {0}",
                         distanceFromOrigin);
+
+                    //  Remember for the next iteration that we just popped from
+                    //  the stack
+                    previouslyPushedToStack = false;
                 }
 
                 //  Report the generation progress to the delegate method
@@ -539,7 +555,27 @@ namespace Maze2012
 
             //  Mark the exit of the maze
             this.terminus = currentCell;
+
+            //  Calculate the distances for the solvers
+            //  calculateDistancesFromOrigin();
         }
+
+        /**
+         *  Used to work out the distance in squares relative to the origin
+         */
+        private void calculateDistancesFromOrigin()
+        {
+            Cell currentCell = this.origin;
+            Stack<Cell> cellStack = new Stack<Cell>();
+            int visitedCells = 0;
+
+            cellStack.Push(origin);
+
+            visitedCells++;
+            currentCell.DistanceFromOrigin = cellStack.Count - 1;
+  
+        }
+
         #endregion
         #region PUBLIC_METHODS
 
