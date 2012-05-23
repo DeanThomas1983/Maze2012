@@ -460,8 +460,7 @@ namespace Maze2012
             //  which they were visited
             Stack<Cell> cellStack = new Stack<Cell>();
             int visitedCells = 0;
-            Boolean previouslyPushedToStack = true;
-
+            
             //  Distance from origin
             int distanceFromOrigin = 0;
             
@@ -492,7 +491,7 @@ namespace Maze2012
 
                     //  Put the new cell on the stack
                     cellStack.Push(currentCell);
-
+                    
                     //  Output that are adding to the stack
                     Debug.WriteLine("Moved into a new cell");
 
@@ -506,8 +505,7 @@ namespace Maze2012
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
                     Debug.WriteLine("Visited cells is now {0}", visitedCells);
 
-                    //  Increment distance from origin by 1
-                    distanceFromOrigin++;
+                    
 
                     if (currentCell.DistanceFromOrigin == Cell.DISTANCE_UNINITILAISED)
                         currentCell.DistanceFromOrigin = distanceFromOrigin;
@@ -515,18 +513,11 @@ namespace Maze2012
                     //  Output distance from origin
                     Debug.WriteLine("Distance from origin is now {0}",
                         distanceFromOrigin);
-
-                    previouslyPushedToStack = true;
                 }
                 else
                 {
                     //  Go back down the path we previously followed
                     currentCell = cellStack.Pop();
-
-                    //  If the previous operation was a push, we need to
-                    //  pop the 
-                    if (previouslyPushedToStack == true)
-                        currentCell = cellStack.Pop();
 
                     //  Output that we are heading down through the stack
                     Debug.WriteLine("Returning to previously visited cell");
@@ -536,16 +527,9 @@ namespace Maze2012
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
                     
-                    //  As we are going backwards reduce the distance from origin by 1
-                    distanceFromOrigin--;
-
                     //  Output distance from origin
                     Debug.WriteLine("Distance from origin is now {0}",
                         distanceFromOrigin);
-
-                    //  Remember for the next iteration that we just popped from
-                    //  the stack
-                    previouslyPushedToStack = false;
                 }
 
                 //  Report the generation progress to the delegate method
@@ -557,7 +541,7 @@ namespace Maze2012
             this.terminus = currentCell;
 
             //  Calculate the distances for the solvers
-            //  calculateDistancesFromOrigin();
+            calculateDistancesFromOrigin();
         }
 
         /**
@@ -565,15 +549,7 @@ namespace Maze2012
          */
         private void calculateDistancesFromOrigin()
         {
-            Cell currentCell = this.origin;
-            Stack<Cell> cellStack = new Stack<Cell>();
-            int visitedCells = 0;
-
-            cellStack.Push(origin);
-
-            visitedCells++;
-            currentCell.DistanceFromOrigin = cellStack.Count - 1;
-  
+            
         }
 
         #endregion
