@@ -584,60 +584,63 @@ namespace Maze2012
             //  Need to visit every cell in the maze structure
             while (closedCells.Count < cells.Count)
             {
+                //  Keep a reference to the previous cell to
+                //  allow us to knock a wall down
+                Cell previousCell = currentCell;
+
                 //  Work with the cell at the front of the queue
                 currentCell = openCells.Dequeue();
+
+                //  Knock a wall down
+                currentCell.demolishWallBetweenCells(previousCell);
+                //previousCell.demolishWallBetweenCells(currentCell);
 
                 //  In theory we shouldn't hit this as closed
                 //  cells should not appear in the queue
                 if (!closedCells.Contains(currentCell))
                 {
-                    //if (currentCell == origin)
-                    //{
-                    //    closedCells.Add(currentCell);
-                    //}
-                    //else
-                    //{
-                        closedCells.Add(currentCell);
 
-                        //  TODO: use an array of neighbour
-                        //  cells for more tidy code
-                        //
-                        //  TODO: could also make the order
-                        //  in which the cells are added random
-                        try
+                    closedCells.Add(currentCell);
+
+                    //  TODO: use an array of neighbour
+                    //  cells for more tidy code
+                    //
+                    //  TODO: could also make the order
+                    //  in which the cells are added random
+                    try
+                    {
+                        if (currentCell.CellToNorth != null)
                         {
-                            if (currentCell.CellToNorth != null)
-                            {
-                                if (!closedCells.Contains(currentCell.CellToNorth))
-                                    openCells.Enqueue(currentCell.CellToNorth);
-                            }
-
-                            if (currentCell.CellToEast != null)
-                            {
-                                if (!closedCells.Contains(currentCell.CellToEast))
-                                    openCells.Enqueue(currentCell.CellToEast);
-                            }
-
-                            if (currentCell.CellToSouth != null)
-                            {
-                                if (!closedCells.Contains(currentCell.CellToSouth))
-                                    openCells.Enqueue(currentCell.CellToSouth);
-                            }
-
-                            if (currentCell.CellToWest != null)
-                            {
-                                if (!closedCells.Contains(currentCell.CellToWest))
-                                    openCells.Enqueue(currentCell.CellToWest);
-                            }
+                            if (!closedCells.Contains(currentCell.CellToNorth))
+                                openCells.Enqueue(currentCell.CellToNorth);
                         }
-                        catch (Exception e)
+
+                        if (currentCell.CellToEast != null)
                         {
-                            Debug.WriteLine(e.ToString());
-                            Debug.WriteLine("Closed cells: {0} Current Cell: {1}",
-                                closedCells.Count,
-                                currentCell.Coordinates.ToString());
+                            if (!closedCells.Contains(currentCell.CellToEast))
+                                openCells.Enqueue(currentCell.CellToEast);
                         }
-                    //}
+
+                        if (currentCell.CellToSouth != null)
+                        {
+                            if (!closedCells.Contains(currentCell.CellToSouth))
+                                openCells.Enqueue(currentCell.CellToSouth);
+                        }
+
+                        if (currentCell.CellToWest != null)
+                        {
+                            if (!closedCells.Contains(currentCell.CellToWest))
+                                openCells.Enqueue(currentCell.CellToWest);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine("Closed cells: {0} Current Cell: {1}",
+                            closedCells.Count,
+                            currentCell.Coordinates.ToString());
+                    }
+
                 }
 
                 //  Report the generation progress to the delegate method

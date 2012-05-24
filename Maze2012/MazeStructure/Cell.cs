@@ -257,6 +257,42 @@ namespace Maze2012
                 default: Debug.WriteLine("Invalid cell selected for demolition"); return null;
             }
         }
+
+        /**
+         * 
+         * 
+         */
+        public void demolishWallBetweenCells(Cell otherCell)
+        {
+            //  Has a wall been knocked down?
+            Boolean success = false;
+
+            //  Demolish a wall on the Y axis
+            if (this.coordinates.X == otherCell.coordinates.X)
+            {
+                if (this.coordinates.Y < otherCell.coordinates.Y)
+                    success = demolishSouthWall();
+                else
+                    if (this.coordinates.Y > otherCell.coordinates.Y)
+                        success = demolishNorthWall();
+            }
+            else
+            {
+                //  Demolish a wall on the X axis
+                if (this.coordinates.Y == otherCell.coordinates.Y)
+                {
+                    if (this.coordinates.X < otherCell.coordinates.X)
+                        success = demolishEastWall();
+                    else
+                        if (this.coordinates.X > otherCell.coordinates.X)
+                            success = demolishWestWall();
+                }
+            }
+
+            if (success)
+                Debug.WriteLine("Wall successfully demolished");
+            //return success;
+        }
         
         #endregion
         #region CONSTRUCTOR_METHODS
