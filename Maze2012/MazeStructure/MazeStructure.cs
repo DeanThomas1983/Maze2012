@@ -175,7 +175,8 @@ namespace Maze2012
             this.resetMaze();
 
             //  Later will add additional algorithms
-            this.generateDepthFirst();
+            //  this.generateDepthFirst();
+            this.generatePrims();
         }
 
         #endregion
@@ -456,6 +457,8 @@ namespace Maze2012
          */
         private void generateDepthFirst()
         {
+            Debug.WriteLine("Using depth first algorithm");
+
             //  Keep tabs on the number of cells visited and the order in
             //  which they were visited
             Stack<Cell> cellStack = new Stack<Cell>();
@@ -465,7 +468,7 @@ namespace Maze2012
             int distanceFromOrigin = 0;
             
             //  Start the maze at a random position
-            Cell currentCell = cells[random.Next(cells.Count)];
+            Cell currentCell = chooseOriginCell();
             origin = currentCell;
             currentCell.DistanceFromOrigin = distanceFromOrigin;
 
@@ -542,6 +545,99 @@ namespace Maze2012
 
             //  Calculate the distances for the solvers
             calculateDistancesFromOrigin();
+        }
+
+        /**
+         *  Choose the maze origin
+         *  
+         *  Choose a random cell in the maze to use as the start or
+         *  origin of the maze
+         */
+        private Cell chooseOriginCell()
+        {
+            //  TODO:  Add additional code to allow additional
+            //  parameters for the start cell - e.g. start on outer
+            //  edge
+            return cells[random.Next(cells.Count)];
+        }
+
+        /**
+         *  Generate a Prim's algorithms maze
+         *  
+         *  Use Prim's algorithm to build the connection between cells
+         * 
+         */
+        private void generatePrims()
+        {
+            Debug.WriteLine("Using Prim's algorithm");
+
+            Queue<Cell> openCells = new Queue<Cell>();
+            List<Cell> closedCells = new List<Cell>();
+
+            //  Choose the maze origin
+            Cell currentCell = chooseOriginCell();
+            origin = currentCell;
+
+            //  Add the origin to the priority queue
+            openCells.Enqueue(currentCell);
+            
+            while (closedCells.Count < cells.Count)
+            {
+                currentCell = openCells.Dequeue();
+
+                if (!closedCells.Contains(currentCell))
+                {
+                    //if (currentCell == origin)
+                    //{
+                    //    closedCells.Add(currentCell);
+                    //}
+                    //else
+                    //{
+                        closedCells.Add(currentCell);
+
+                        //  TODO: use an array of neighbour
+                        //  cells for more tidy code
+                        try
+                        {
+                            if (currentCell.CellToNorth != null)
+                            {
+                                if (!closedCells.Contains(currentCell.CellToNorth))
+                                    openCells.Enqueue(currentCell.CellToNorth);
+                            }
+
+                            if (currentCell.CellToEast != null)
+                            {
+                                if (!closedCells.Contains(currentCell.CellToEast))
+                                    openCells.Enqueue(currentCell.CellToEast);
+                            }
+
+                            if (currentCell.CellToSouth != null)
+                            {
+                                if (!closedCells.Contains(currentCell.CellToSouth))
+                                    openCells.Enqueue(currentCell.CellToSouth);
+                            }
+
+                            if (currentCell.CellToWest != null)
+                            {
+                                if (!closedCells.Contains(currentCell.CellToWest))
+                                    openCells.Enqueue(currentCell.CellToWest);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e.ToString());
+                            Debug.WriteLine("Closed cells: {0} Current Cell: {1}",
+                                closedCells.Count,
+                                currentCell.Coordinates.ToString());
+                        }
+                    //}
+                }
+
+                //  Report the generation progress to the delegate method
+                generationBackgroundWorker.ReportProgress(
+                    (int)(100 * ((decimal)closedCells.Count / (decimal)cells.Count)));
+            }
+
         }
 
         /**
