@@ -581,10 +581,14 @@ namespace Maze2012
             //  Add the origin to the priority queue
             openCells.Enqueue(currentCell);
             
+            //  Need to visit every cell in the maze structure
             while (closedCells.Count < cells.Count)
             {
+                //  Work with the cell at the front of the queue
                 currentCell = openCells.Dequeue();
 
+                //  In theory we shouldn't hit this as closed
+                //  cells should not appear in the queue
                 if (!closedCells.Contains(currentCell))
                 {
                     //if (currentCell == origin)
@@ -597,6 +601,9 @@ namespace Maze2012
 
                         //  TODO: use an array of neighbour
                         //  cells for more tidy code
+                        //
+                        //  TODO: could also make the order
+                        //  in which the cells are added random
                         try
                         {
                             if (currentCell.CellToNorth != null)
@@ -636,6 +643,10 @@ namespace Maze2012
                 //  Report the generation progress to the delegate method
                 generationBackgroundWorker.ReportProgress(
                     (int)(100 * ((decimal)closedCells.Count / (decimal)cells.Count)));
+
+                Debug.WriteLine("Cells in queue: {0} Current Cell: {1}",
+                    openCells.Count,
+                    currentCell.Coordinates.ToString());
             }
 
         }
