@@ -131,7 +131,7 @@ namespace Maze2012
             {
                 if (connectedCells[i] != null)
                 {
-                    if (connectedCells[i].countWalls() == 4)
+                    if (connectedCells[i].countWalls() == MAXIMUM_CONNECTIONS)
                     {
                         //  List of directions
                         result.Add(i);
@@ -396,10 +396,14 @@ namespace Maze2012
         public Cell()
         {
             //  List of connected cells
-            connectedCells = new Cell[4];
+            connectedCells = new Cell[MAXIMUM_CONNECTIONS];
 
             //  Cell Walls
-            walls = new bool[4] { true, true, true, true };
+            walls = new bool[MAXIMUM_CONNECTIONS];
+            for (int i = 0; i < walls.Length; i++)
+            {
+                walls[i] = true;
+            }
 
             //  Distance from origin
             distanceFromOrigin = DISTANCE_UNINITILAISED;
