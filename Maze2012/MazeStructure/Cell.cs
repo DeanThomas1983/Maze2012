@@ -259,8 +259,13 @@ namespace Maze2012
         }
 
         /**
-         * 
-         * 
+         *  Knock down a wall
+         *  
+         *  Knock the wall down between two cells, the wall demolished
+         *  is caluclated by assessing the orientation between the two
+         *  cells.
+         *  
+         *  @param otherCell the second cell to knock the wall down
          */
         public void demolishWallBetweenCells(Cell otherCell)
         {

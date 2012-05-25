@@ -175,8 +175,8 @@ namespace Maze2012
             this.resetMaze();
 
             //  Later will add additional algorithms
-            //  this.generateDepthFirst();
-            this.generatePrims();
+            this.generateDepthFirst();
+            //  this.generatePrims();
         }
 
         #endregion
