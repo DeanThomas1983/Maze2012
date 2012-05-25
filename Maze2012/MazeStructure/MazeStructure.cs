@@ -236,7 +236,7 @@ namespace Maze2012
             //  Create the array of cells (as a 1D list)
             for (int i = 0; i < mazeDimensions.Width * mazeDimensions.Height; i++)
             {
-                Cell newCell = new Cell(indexToCoordinate(i));
+                Cell newCell = new Cell(indexToCoordinate(i), this.cellSize);
 
                 cells.Add(newCell);
             }
@@ -265,81 +265,18 @@ namespace Maze2012
 
             //  Create graphics objects to draw the map
             Graphics g = Graphics.FromImage(twoDimensionalMap);
-            Pen pen = new Pen(Color.Blue);
-
-            //  Loop through all the cells in the array list
-            for (int i = 0; i < this.cells.Count; i++)
+            
+            //  Loop through all cells in the array
+            foreach (Cell c in cells)
             {
-                //  Highlight origin in light blue
-                if (cells[i] == origin)
-                {
-                    pen.Color = Color.LightBlue;
-                }
-                else
-                {
-                    //  Mark the terminus in orange
-                    if (cells[i] == terminus)
-                    {
-                        pen.Color = Color.Orange;
-                    }
-                    else
-                    {
-                        //  Highlight selected cell in yellow
-                        if (i == selectedCellIndex)
-                        {
-                            pen.Color = Color.Yellow;
-                        }
-                        else
-                        {
-                            /*
-                            if ((selectedCell == coordinateToIndex(row - 1, col)) || (selectedCell == coordinateToIndex(row + 1, col))
-                                || (selectedCell == coordinateToIndex(row, col - 1)) || (selectedCell == coordinateToIndex(row, col + 1)))
-                            {
-                                pen.Color = Color.LightGreen;
-                            }
-                            else
-                             */
-                            {
-                                pen.Color = Color.Blue;
-                            }
-                        }
-                    }
-                }
+                //  Ask each cell to draw itself and draw this to the
+                //  map of the entire maze
+                g.DrawImage(c.draw2D(), 
+                    c.Coordinates.X * c.CellSize.Width,
+                    c.Coordinates.Y * c.CellSize.Height);
+            }
 
-                //  TODO: move the drawing function to individual cells?
-
-                //  Draw the north wall (if present)
-                if (cells[i].NorthWall)
-                    g.DrawLine(pen,
-                        new Point(cellSize.Width * indexToCoordinate(i).X, 
-                            cellSize.Height * indexToCoordinate(i).Y),
-                        new Point(cellSize.Width * (indexToCoordinate(i).X + 1), 
-                            cellSize.Height * indexToCoordinate(i).Y));
-
-                //  Draw the south wall (if present)
-                if (cells[i].SouthWall)
-                    g.DrawLine(pen,
-                        new Point(cellSize.Width * indexToCoordinate(i).X, 
-                            (cellSize.Height * (indexToCoordinate(i).Y + 1)) - 1),
-                        new Point(cellSize.Width * (indexToCoordinate(i).X + 1), 
-                            (cellSize.Height * (indexToCoordinate(i).Y + 1)) - 1));
-
-                //  Draw the west wall (if present)
-                if (cells[i].WestWall)
-                    g.DrawLine(pen,
-                        new Point(cellSize.Width * indexToCoordinate(i).X, 
-                            cellSize.Height * indexToCoordinate(i).Y),
-                        new Point(cellSize.Width * indexToCoordinate(i).X, 
-                            cellSize.Height * (indexToCoordinate(i).Y + 1)));
-
-                //  Draw the east wall (if present)
-                if (cells[i].EastWall)
-                    g.DrawLine(pen,
-                        new Point((cellSize.Width * (indexToCoordinate(i).X + 1) - 1), 
-                            cellSize.Height * indexToCoordinate(i).Y),
-                        new Point((cellSize.Width * (indexToCoordinate(i).X + 1) - 1), 
-                            cellSize.Height * (indexToCoordinate(i).Y + 1)));
-
+            /*
                 //  HACK:   tidy this code up, it is difficult to read
                 //  Draw the distance from the origin
                 if (showDistanceFromOrigin)
@@ -352,11 +289,11 @@ namespace Maze2012
                             cellSize.Width,
                             cellSize.Height));
                 }
+            
+            //}
 
-            }
+             */
 
-            //  Dispose of graphics objects
-            pen.Dispose();
             g.Dispose();
         }
 
@@ -501,14 +438,11 @@ namespace Maze2012
                     //  Mark that we have moved to another cell
                     visitedCells++;
 
-                    
                     //  Output the current position and count to the console
                     Debug.WriteLine("Current cell [{0},{1}]",
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
                     Debug.WriteLine("Visited cells is now {0}", visitedCells);
-
-                    
 
                     if (currentCell.DistanceFromOrigin == Cell.DISTANCE_UNINITILAISED)
                         currentCell.DistanceFromOrigin = distanceFromOrigin;
@@ -545,6 +479,10 @@ namespace Maze2012
 
             //  Calculate the distances for the solvers
             calculateDistancesFromOrigin();
+
+            //  Tell the origin and exit cells of their position
+            origin.IsOrigin = true;
+            terminus.IsExit = true;
         }
 
         /**
@@ -651,7 +589,6 @@ namespace Maze2012
                     openCells.Count,
                     currentCell.Coordinates.ToString());
             }
-
         }
 
         /**

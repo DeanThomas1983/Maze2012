@@ -33,6 +33,8 @@ namespace Maze2012
         //  Number of maximum connections
         const int MAXIMUM_CONNECTIONS = 4;
 
+        Size cellSize;
+
         #endregion
         #region PRIVATE_VARIABLES
 
@@ -40,6 +42,9 @@ namespace Maze2012
         private Cell[] connectedCells;
         //  Walls
         private bool[] walls;
+        //  Let the cell know if it is the origin or exit
+        private bool isOrigin;
+        private bool isExit;
 
         //  Random number generator
 #if FIXED_MAZE_LAYOUT
@@ -56,7 +61,6 @@ namespace Maze2012
         #endregion
         #region PUBLIC_PROPERTIES
         //  Connected cells
-
         public Cell CellToNorth { get { return connectedCells[NORTH]; } set { connectedCells[NORTH] = value; } }
         public Cell CellToSouth { get { return connectedCells[SOUTH]; } set { connectedCells[SOUTH] = value; } }
         public Cell CellToEast { get { return connectedCells[EAST]; } set { connectedCells[EAST] = value; } }
@@ -74,7 +78,26 @@ namespace Maze2012
 
         //  Coordinates
         public Point Coordinates { get { return coordinates; } }
-        
+
+        //  Size of the cell in pixels
+        public Size CellSize
+        {
+            get { return cellSize; }
+            set { cellSize = value; }
+        }
+
+        public bool IsOrigin
+        {
+            get { return isOrigin; }
+            set { isOrigin = value; }
+        }
+
+        public bool IsExit
+        {
+            get { return isExit; }
+            set { isExit = value; }
+        }
+
         /**
          *  Distance from the origin cell
          *  
@@ -298,6 +321,68 @@ namespace Maze2012
                 Debug.WriteLine("Wall successfully demolished");
             //return success;
         }
+
+        /**
+         *  Render the cell in 2D
+         *  
+         *  Draw the cell in 2D by representing walls as a line
+         *  
+         *  @return Bitmap the 2D render of the cell
+         */
+        public Bitmap draw2D()
+        {
+            //  Graphic objects
+            Bitmap bitmap = new Bitmap(this.cellSize.Width, this.cellSize.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+            Pen pen;
+
+            //  Choose the colour of the pen
+            if (this.isExit)
+            {
+                pen = new Pen(Color.Lime);
+            }
+            else
+            {
+                if (this.isOrigin)
+                {
+                    pen = new Pen(Color.Red);
+                }
+                else
+                {
+                    pen = new Pen(Color.Blue);
+                }
+            }
+
+            //  Draw the north wall
+            if (NorthWall)
+                g.DrawLine(pen, 
+                    new Point(0,0), 
+                    new Point(cellSize.Width - 1, 0));
+
+            //  Draw the south wall (if present)
+            if (SouthWall)
+                g.DrawLine(pen, 
+                    new Point(0, cellSize.Height - 1),
+                    new Point(cellSize.Width - 1, cellSize.Height - 1));
+
+            //  Draw the west wall (if present)
+            if (WestWall)
+                g.DrawLine(pen,
+                    new Point(0, 0),
+                    new Point(0, cellSize.Height - 1));
+
+            //  Draw the east wall (if present)
+            if (EastWall)
+                g.DrawLine(pen,
+                    new Point(cellSize.Width - 1, 0),
+                    new Point(cellSize.Width - 1, cellSize.Height - 1));
+
+            //  Release the graphics object
+            pen.Dispose(); 
+            g.Dispose();
+
+            return bitmap;
+        }
         
         #endregion
         #region CONSTRUCTOR_METHODS
@@ -318,6 +403,10 @@ namespace Maze2012
 
             //  Distance from origin
             distanceFromOrigin = DISTANCE_UNINITILAISED;
+
+            //  By default neither of these are true
+            isOrigin = false;
+            isExit = false;
         }
 
         /**
@@ -328,11 +417,13 @@ namespace Maze2012
          *  
          *  @param coordinates a 2 dimensional point in space relating to the distance in
          *  the parent maze object
+         *  @param cellSize the size in pixels of the new cell
          */
-        public Cell(Point coordinates)
+        public Cell(Point coordinates, Size cellSize)
             : this()
         {
             this.coordinates = coordinates;
+            this.cellSize = cellSize;
         }
 
         #endregion
