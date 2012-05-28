@@ -29,6 +29,8 @@ namespace Maze2012
         #endregion
         #region PRIVATE_VARIABLES
 
+        TopologicalMap topologicalMap;
+
         //  List of all the cells associated with the current maze
         List<Cell> cells = new List<Cell>();
 
@@ -61,6 +63,11 @@ namespace Maze2012
 
         #endregion
         #region PUBLIC_PROPERTIES
+
+        internal TopologicalMap TopologicalMap
+        {
+            get { return topologicalMap; }
+        }
 
         /**
          *  Starting point of the maze
@@ -483,6 +490,12 @@ namespace Maze2012
             //  Tell the origin and exit cells of their position
             origin.IsOrigin = true;
             terminus.IsExit = true;
+
+            //  TODO: move this to a higher level function shared by all
+            //  generation algorithms
+            //  if (topologicalMap != null)
+                //  topologicalMap.
+            topologicalMap = new TopologicalMap(origin.Coordinates.ToString());
         }
 
         /**

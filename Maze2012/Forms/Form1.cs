@@ -11,10 +11,11 @@ namespace Maze2012
 {
     public partial class Form1 : Form
     {
-        Graphics g;
+        Graphics mainGraphics;
+        Graphics mapGraphics;
         DataModel dataModel;
         SharpGLForm sharpGLForm = new SharpGLForm();
-
+        
         int selected = 0;
 
         int i;
@@ -38,7 +39,8 @@ namespace Maze2012
             
             dataModel.SolverAgentList.Add(new SimpleSolverAgent());
 
-            g = panel1.CreateGraphics();
+            mainGraphics = panel1.CreateGraphics();
+            mapGraphics = panel2.CreateGraphics();
 
 #if !NO_OPEN_GL
             sharpGLForm.DataModel = dataModel;
@@ -49,10 +51,11 @@ namespace Maze2012
         {
             dataModel.SolverAgentList.setAgentStartingCells(dataModel.MazeStructure.Origin);
 
-            g.Clear(Color.Black);
+            mainGraphics.Clear(Color.Black);
 
-            g.DrawImage(dataModel.TwoDimensionalMap, new Point(0, 0));
+            mainGraphics.DrawImage(dataModel.TwoDimensionalMap, new Point(0, 0));
 
+            mapGraphics.DrawImage(dataModel.MazeStructure.TopologicalMap.draw(), new Point(0,0));
             
         }
 
@@ -74,7 +77,7 @@ namespace Maze2012
         {
             dataModel.SolverAgentList.move();
 
-            g.DrawImage(dataModel.TwoDimensionalMap, new Point(0, 0));
+            mainGraphics.DrawImage(dataModel.TwoDimensionalMap, new Point(0, 0));
 
         }
     }

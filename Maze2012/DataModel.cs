@@ -6,7 +6,7 @@ namespace Maze2012
     {
         MazeStructure mazeStructure;
         SolverAgentList solverAgentList;
-
+        
         public Bitmap TwoDimensionalMap { get { return drawTwoDimensionalMap(); } }
 
         private Bitmap drawTwoDimensionalMap()
@@ -33,6 +33,7 @@ namespace Maze2012
         {
             mazeStructure = new MazeStructure();
             solverAgentList = new SolverAgentList();
+            
         }
     }
 }

@@ -32,6 +32,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // button1
@@ -68,11 +69,19 @@
             this.progressBar1.Size = new System.Drawing.Size(514, 23);
             this.progressBar1.TabIndex = 3;
             // 
+            // panel2
+            // 
+            this.panel2.Location = new System.Drawing.Point(555, 88);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(514, 288);
+            this.panel2.TabIndex = 4;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(566, 434);
+            this.ClientSize = new System.Drawing.Size(1142, 434);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.panel1);
@@ -90,6 +99,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

@@ -79,6 +79,8 @@
     <Compile Include="AI\SimpleSolverAgent.cs" />
     <Compile Include="AI\SolverAgent.cs" />
     <Compile Include="AI\SolverAgentList.cs" />
+    <Compile Include="TopologicalMap\Node.cs" />
+    <Compile Include="TopologicalMap\TopologicalMap.cs" />
     <EmbeddedResource Include="Forms\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
