@@ -407,10 +407,10 @@ namespace Maze2012
             //  which they were visited
             Stack<Cell> cellStack = new Stack<Cell>();
             int visitedCells = 0;
-            
+
             //  Distance from origin
             int distanceFromOrigin = 0;
-            
+
             //  Start the maze at a random position
             Cell currentCell = chooseOriginCell();
             origin = currentCell;
@@ -438,7 +438,7 @@ namespace Maze2012
 
                     //  Put the new cell on the stack
                     cellStack.Push(currentCell);
-                    
+
                     //  Output that are adding to the stack
                     Debug.WriteLine("Moved into a new cell");
 
@@ -453,7 +453,7 @@ namespace Maze2012
 
                     if (currentCell.DistanceFromOrigin == Cell.DISTANCE_UNINITILAISED)
                         currentCell.DistanceFromOrigin = distanceFromOrigin;
-                    
+
                     //  Output distance from origin
                     Debug.WriteLine("Distance from origin is now {0}",
                         distanceFromOrigin);
@@ -470,7 +470,7 @@ namespace Maze2012
                     Debug.WriteLine("Current cell [{0},{1}]",
                         indexToCoordinate(cells.IndexOf(currentCell)).X,
                         indexToCoordinate(cells.IndexOf(currentCell)).Y);
-                    
+
                     //  Output distance from origin
                     Debug.WriteLine("Distance from origin is now {0}",
                         distanceFromOrigin);
@@ -494,8 +494,11 @@ namespace Maze2012
             //  TODO: move this to a higher level function shared by all
             //  generation algorithms
             //  if (topologicalMap != null)
-                //  topologicalMap.
-            topologicalMap = new TopologicalMap(origin.Coordinates.ToString());
+            //  topologicalMap.
+            topologicalMap = new TopologicalMap(
+                origin.Coordinates.X.ToString() +
+                "," +
+                origin.Coordinates.Y.ToString());
         }
 
         /**
